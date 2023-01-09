@@ -22,8 +22,7 @@ import (
 
 // MemcachedSpec defines the desired state of Memcached
 type MemcachedSpec struct {
-	// +kubebuilder:default=""
-	ImageRepository string `json:"imageRepository"`
+	ImageRepository string `json:"imageRepository,omitempty"`
 }
 
 // MemcachedStatus defines the observed state of Memcached

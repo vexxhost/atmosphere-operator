@@ -36,10 +36,7 @@ spec:
             description: MemcachedSpec defines the desired state of Memcached
             properties:
               imageRepository:
-                default: ""
                 type: string
-            required:
-            - imageRepository
             type: object
           status:
             description: MemcachedStatus defines the observed state of Memcached
