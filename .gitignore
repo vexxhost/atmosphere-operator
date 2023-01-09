@@ -19,6 +19,9 @@ Dockerfile.cross
 
 !vendor/**/zz_generated.*
 
+# Allow `bin` folder inside Helm charts
+!helm-charts/**/bin
+
 # editor and IDE paraphernalia
 .idea
 *.swp
