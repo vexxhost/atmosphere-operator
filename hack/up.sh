@@ -14,7 +14,7 @@ fi
 # TODO(mnaser): Use OLM for this
 ${KUBECTL} apply --server-side -f https://github.com/prometheus-operator/prometheus-operator/raw/v0.62.0/bundle.yaml
 ${KUBECTL} apply --server-side -f https://raw.githubusercontent.com/percona/percona-xtradb-cluster-operator/v1.12.0/deploy/bundle.yaml
-# TODO(mnaser): RabbitMQ
+${KUBECTL} apply --server-side -f https://github.com/rabbitmq/cluster-operator/releases/download/v1.13.1/cluster-operator.yml
 
 # Install the CRDs
 make install
