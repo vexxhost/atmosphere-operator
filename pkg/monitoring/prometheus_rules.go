@@ -36,7 +36,10 @@ func GetMemcachedPrometheusRules() ([]monitoringv1.RuleGroup, error) {
 	}
 
 	groups := []monitoringv1.RuleGroup{}
-	json.Unmarshal([]byte(jsonStr), &groups)
+	err = json.Unmarshal([]byte(jsonStr), &groups)
+	if err != nil {
+		return nil, err
+	}
 
 	return groups, nil
 }

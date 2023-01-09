@@ -12,7 +12,7 @@ func GetImageTagsForOpenstackHelmChart(chart *chart.Chart, registry string) (map
 	images := chart.Values["images"]
 	chartTags := images.(map[string]interface{})["tags"].(map[string]interface{})
 
-	for key, _ := range chartTags {
+	for key := range chartTags {
 		if slices.Contains(SKIP_LIST, key) {
 			continue
 		}
