@@ -34,7 +34,6 @@ import (
 	"github.com/operator-framework/helm-operator-plugins/pkg/hook"
 	"github.com/operator-framework/helm-operator-plugins/pkg/reconciler"
 	"github.com/operator-framework/helm-operator-plugins/pkg/values"
-	"github.com/vexxhost/atmosphere-operator/apis/openstack/v1alpha1"
 	openstackv1alpha1 "github.com/vexxhost/atmosphere-operator/apis/openstack/v1alpha1"
 	"github.com/vexxhost/atmosphere-operator/pkg/endpoints"
 	"github.com/vexxhost/atmosphere-operator/pkg/images"
@@ -180,8 +179,8 @@ func (r *KeystoneReconciler) SetupWithManager(mgr ctrl.Manager) error {
 		reconciler.WithValueTranslator(translator),
 		reconciler.SkipPrimaryGVKSchemeRegistration(true),
 		reconciler.WithGroupVersionKind(schema.GroupVersionKind{
-			Group:   v1alpha1.GroupVersion.Group,
-			Version: v1alpha1.GroupVersion.Version,
+			Group:   openstackv1alpha1.GroupVersion.Group,
+			Version: openstackv1alpha1.GroupVersion.Version,
 			Kind:    "Keystone",
 		}),
 	)
