@@ -1,3 +1,10 @@
+# Build the Helm charts
+FROM alpine:3 AS helm-builder
+RUN apk add --no-cache bash git helm make
+COPY helm-charts/ /build/helm-charts
+COPY Makefile /build/Makefile
+RUN make -C /build charts
+
 # Build the manager binary
 FROM golang:1.19 as builder
 ARG TARGETOS
@@ -13,8 +20,9 @@ RUN go mod download
 
 # Copy the go source
 COPY main.go main.go
-COPY api/ api/
+COPY apis/ apis/
 COPY controllers/ controllers/
+COPY pkg/ pkg/
 
 # Build
 # the GOARCH has not a default value to allow the binary be built according to the host where the command
@@ -28,6 +36,7 @@ RUN CGO_ENABLED=0 GOOS=${TARGETOS:-linux} GOARCH=${TARGETARCH} go build -a -o ma
 FROM gcr.io/distroless/static:nonroot
 WORKDIR /
 COPY --from=builder /workspace/manager .
+COPY --from=helm-builder /build/helm-charts/*.tgz /helm-charts
 USER 65532:65532
 
 ENTRYPOINT ["/manager"]

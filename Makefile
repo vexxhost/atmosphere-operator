@@ -272,4 +272,4 @@ helm-charts/%.tgz: helm-charts/%
 
 # Build all Helm charts
 .PHONY: charts
-charts: sync-charts $(patsubst %,%.tgz,$(CHARTS))
+charts: $(patsubst %,%.tgz,$(CHARTS))
