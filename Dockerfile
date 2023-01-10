@@ -36,7 +36,7 @@ RUN CGO_ENABLED=0 GOOS=${TARGETOS:-linux} GOARCH=${TARGETARCH} go build -a -o ma
 FROM gcr.io/distroless/static:nonroot
 WORKDIR /
 COPY --from=builder /workspace/manager .
-COPY --from=helm-builder /build/helm-charts/*.tgz /helm-charts
+COPY --from=helm-builder /build/helm-charts /helm-charts
 USER 65532:65532
 
 ENTRYPOINT ["/manager"]
