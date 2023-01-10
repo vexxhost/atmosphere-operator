@@ -275,5 +275,5 @@ helm-charts/%.tgz: helm-charts/%
 charts: $(patsubst %,%.tgz,$(CHARTS))
 
 # Build a deployment manifest
-deploy-manifest:
+deploy-manifests: manifests
 	$(KUSTOMIZE) build config/default > bundle.yaml

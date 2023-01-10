@@ -47,6 +47,17 @@ type KeystoneReconciler struct {
 	Scheme *runtime.Scheme
 }
 
+// 1.6733330759414449e+09  ERROR   Reconciler error        {"controller": "keystone-controller", "object": {"name":"keystone","namespace":"openstack"}, "namespace": "openstack", "name": "keystone", "reconcileID": "6f86e0e8-c6de-445a-912f-228e07d7229b", "error": "roles.rbac.authorization.k8s.io \"keystone-openstack-keystone-credential-rotate\" is forbidden: user \"system:serviceaccount:atmosphere-system:atmosphere-controller-manager\" (groups=[\"system:serviceaccounts\" \"system:serviceaccounts:atmosphere-system\" \"system:authenticated\"]) is attempting to grant RBAC permissions not currently held:\n{APIGroups:[\"extensions\"], Resources:[\"jobs\"], Verbs:[\"get\" \"list\"]}\n{APIGroups:[\"extensions\"], Resources:[\"pods\"], Verbs:[\"get\" \"list\"]}"}
+
+// TODO(mnaser): Tone down these RBAC rules
+//+kubebuilder:rbac:groups=apps;batch;core;extensions,resources=deployments;daemonsets;endpoints;replicasets;services;statefulsets,verbs=get;list;watch;create;update;patch;delete
+//+kubebuilder:rbac:groups=apps;batch;core;extensions,resources=cronjobs;jobs,verbs=get;list;watch;create;update;patch;delete
+//+kubebuilder:rbac:groups=apps;batch;core;extensions,resources=pods;services;endpoints;persistentvolumeclaims;events;configmaps;secrets;serviceaccounts;namespaces,verbs=get;list;watch;create;update;patch;delete
+//+kubebuilder:rbac:groups=networking.k8s.io,resources=ingresses;networkpolicies,verbs=get;list;watch;create;update;patch;delete
+//+kubebuilder:rbac:groups=policy,resources=poddisruptionbudgets,verbs=get;list;watch;create;update;patch;delete
+//+kubebuilder:rbac:groups=rbac.authorization.k8s.io,resources=roles;rolebindings,verbs=get;list;watch;create;update;patch;delete
+//+kubebuilder:rbac:groups=storage.k8s.io,resources=storageclasses,verbs=get;list;watch
+//+kubebuilder:rbac:groups=pxc.percona.com,resources=perconaxtradbclusters,verbs=get;list;watch
 //+kubebuilder:rbac:groups=openstack.atmosphere.vexxhost.com,resources=keystones,verbs=get;list;watch;create;update;patch;delete
 //+kubebuilder:rbac:groups=openstack.atmosphere.vexxhost.com,resources=keystones/status,verbs=get;update;patch
 //+kubebuilder:rbac:groups=openstack.atmosphere.vexxhost.com,resources=keystones/finalizers,verbs=update

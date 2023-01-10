@@ -48,10 +48,11 @@ type MemcachedReconciler struct {
 	Scheme *runtime.Scheme
 }
 
+//+kubebuilder:rbac:groups=core,resources=secrets,verbs=get;list;watch;create;update;patch;delete
+//+kubebuilder:rbac:groups=core,resources=services,verbs=get;create;update;delete
 //+kubebuilder:rbac:groups=infra.atmosphere.vexxhost.com,resources=memcacheds,verbs=get;list;watch;create;update;patch;delete
 //+kubebuilder:rbac:groups=infra.atmosphere.vexxhost.com,resources=memcacheds/status,verbs=get;update;patch
 //+kubebuilder:rbac:groups=infra.atmosphere.vexxhost.com,resources=memcacheds/finalizers,verbs=update
-//+kubebuilder:rbac:groups=core,resources=services,verbs=get;create;update;delete
 //+kubebuilder:rbac:groups=monitoring.coreos.com,resources=servicemonitors,verbs=get;create;update
 //+kubebuilder:rbac:groups=monitoring.coreos.com,resources=prometheusrules,verbs=get;create;update
 
