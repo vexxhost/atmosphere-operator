@@ -66,22 +66,7 @@ func ForChart(chart *chart.Chart, config *EndpointConfig) (map[string]interface{
 
 	for endpointName, endpointValues := range chartEndpoints {
 		switch endpointName {
-		case "ceph_mon":
-		case "ceph_object_store":
-		case "cloudwatch":
-		case "cluster_domain_suffix":
-		case "compute_spice_proxy":
-		case "fluentd":
-		case "ingress":
-		case "kube_dns":
-		case "ldap":
-		case "libvirt_exporter":
-		case "local_image_registry":
-		case "monitoring":
-		case "object_store":
-		case "oci_image_registry":
-		case "powerdns":
-		case "prometheus_rabbitmq_exporter":
+		case "ceph_mon", "ceph_object_store", "cloudwatch", "cluster_domain_suffix", "compute_spice_proxy", "fluentd", "ingress", "kube_dns", "ldap", "libvirt_exporter", "local_image_registry", "monitoring", "object_store", "oci_image_registry", "powerdns", "prometheus_rabbitmq_exporter":
 			continue
 		case "baremetal":
 			endpoint, err := basicEndpoint(config.IronicHost)
@@ -241,9 +226,7 @@ func ForChart(chart *chart.Chart, config *EndpointConfig) (map[string]interface{
 					"memcache_secret_key": config.MemcacheSecretKey,
 				},
 			}
-		case "oslo_db":
-		case "oslo_db_api":
-		case "oslo_db_cell0":
+		case "oslo_db", "oslo_db_api", "oslo_db_cell0":
 			auth, err := endpointAuth(endpointValues, map[string]string{
 				"admin":     config.DatabaseRootPassword,
 				"keystone":  config.KeystoneDatabasePassword,
@@ -253,6 +236,7 @@ func ForChart(chart *chart.Chart, config *EndpointConfig) (map[string]interface{
 				"placement": config.PlacementDatabasePassword,
 				"neutron":   config.NeutronDatabasePassword,
 				"nova":      config.NovaDatabasePassword,
+				"nova_api":  config.NovaDatabasePassword,
 				"senlin":    config.SenlinDatabasePassword,
 				"designate": config.DesignateDatabasePassword,
 				"heat":      config.HeatDatabasePassword,

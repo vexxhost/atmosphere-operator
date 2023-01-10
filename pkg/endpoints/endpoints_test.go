@@ -202,9 +202,7 @@ func TestForChart(t *testing.T) {
 					assertEndpointHostFQDNOverride(t, config.HeatHost, endpoints[endpoint])
 				case "oslo_cache":
 					assert.Equal(t, config.MemcacheSecretKey, endpoints[endpoint].(map[string]interface{})["auth"].(map[string]interface{})["memcache_secret_key"])
-				case "oslo_db":
-				case "oslo_db_api":
-				case "oslo_db_cell0":
+				case "oslo_db", "oslo_db_api", "oslo_db_cell0":
 					auth := endpoints[endpoint].(map[string]interface{})["auth"].(map[string]interface{})
 
 					assert.Equal(t, config.DatabaseRootPassword, auth["admin"].(map[string]interface{})["password"])
@@ -233,6 +231,8 @@ func TestForChart(t *testing.T) {
 						assert.Equal(t, config.OctaviaDatabasePassword, auth["octavia"].(map[string]interface{})["password"])
 					} else if tc.Name() == "magnum" {
 						assert.Equal(t, config.MagnumDatabasePassword, auth["magnum"].(map[string]interface{})["password"])
+					} else if tc.Name() == "horizon" {
+						assert.Equal(t, config.HorizonDatabasePassword, auth["horizon"].(map[string]interface{})["password"])
 					} else {
 						t.Errorf("untested database configuration for %s", tc.Name())
 					}
