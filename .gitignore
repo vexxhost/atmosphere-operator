@@ -5,7 +5,7 @@
 *.dll
 *.so
 *.dylib
-bin
+/bin
 testbin/*
 Dockerfile.cross
 
@@ -22,7 +22,6 @@ Dockerfile.cross
 # Helm charts
 helm-charts/*.tgz
 helm-charts/**/charts
-!helm-charts/**/bin
 
 # editor and IDE paraphernalia
 .idea
