@@ -618,7 +618,7 @@ spec:
         - --leader-elect
         command:
         - /manager
-        image: quay.io/vexxhost/atmosphere-operator:main
+        image: quay.io/vexxhost/atmosphere:main
         livenessProbe:
           httpGet:
             path: /healthz

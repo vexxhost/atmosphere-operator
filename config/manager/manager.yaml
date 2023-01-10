@@ -70,7 +70,7 @@ spec:
         - /manager
         args:
         - --leader-elect
-        image: quay.io/vexxhost/atmosphere-operator:main
+        image: quay.io/vexxhost/atmosphere:main
         name: manager
         securityContext:
           allowPrivilegeEscalation: false
