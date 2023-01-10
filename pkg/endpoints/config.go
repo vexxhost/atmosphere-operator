@@ -31,14 +31,71 @@ type EndpointConfig struct {
 	KeystoneRabbitmqPassword string
 	KeystoneAdminPassword    string
 
-	BarbicanHost string
+	BarbicanHost             string
+	BarbicanDatabasePassword string
+	BarbicanRabbitmqPassword string
+	BarbicanKeystonePassword string
 
-	HeatHost string
+	GlanceHost             string
+	GlanceDatabasePassword string
+	GlanceRabbitmqPassword string
+	GlanceKeystonePassword string
 
-	MagnumAPIHost          string
+	CinderHost             string
+	CinderDatabasePassword string
+	CinderRabbitmqPassword string
+	CinderKeystonePassword string
+
+	PlacementHost             string
+	PlacementDatabasePassword string
+	PlacementRabbitmqPassword string
+	PlacementKeystonePassword string
+
+	NeutronHost             string
+	NeutronDatabasePassword string
+	NeutronRabbitmqPassword string
+	NeutronKeystonePassword string
+
+	IronicHost             string
+	IronicKeystonePassword string
+
+	NovaHost             string
+	NovaNovncHost        string
+	NovaDatabasePassword string
+	NovaRabbitmqPassword string
+	NovaKeystonePassword string
+	NovaMetadataSecret   string
+
+	SenlinHost             string
+	SenlinDatabasePassword string
+	SenlinRabbitmqPassword string
+	SenlinKeystonePassword string
+
+	DesignateHost             string
+	DesignateDatabasePassword string
+	DesignateRabbitmqPassword string
+	DesignateKeystonePassword string
+
+	HeatHost                      string
+	HeatCloudFormationHost        string
+	HeatDatabasePassword          string
+	HeatRabbitmqPassword          string
+	HeatKeystonePassword          string
+	HeatTrusteeKeystonePassword   string
+	HeatStackUserKeystonePassword string
+
+	OctaviaHost             string
+	OctaviaDatabasePassword string
+	OctaviaRabbitmqPassword string
+	OctaviaKeystonePassword string
+
+	MagnumHost             string
 	MagnumDatabasePassword string
 	MagnumRabbitmqPassword string
 	MagnumKeystonePassword string
+
+	HorizonHost             string
+	HorizonDatabasePassword string
 }
 
 func NewConfig(options ...func(*EndpointConfig) error) (*EndpointConfig, error) {

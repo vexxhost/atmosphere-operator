@@ -66,98 +66,106 @@ func ForChart(chart *chart.Chart, config *EndpointConfig) (map[string]interface{
 
 	for endpointName, endpointValues := range chartEndpoints {
 		switch endpointName {
+		case "ceph_mon":
+		case "ceph_object_store":
+		case "cloudwatch":
 		case "cluster_domain_suffix":
+		case "compute_spice_proxy":
+		case "fluentd":
 		case "ingress":
 		case "kube_dns":
 		case "ldap":
+		case "libvirt_exporter":
 		case "local_image_registry":
+		case "monitoring":
+		case "object_store":
 		case "oci_image_registry":
-		case "fluentd":
+		case "powerdns":
+		case "prometheus_rabbitmq_exporter":
 			continue
+		case "baremetal":
+			endpoint, err := basicEndpoint(config.IronicHost)
+			if err != nil {
+				return nil, err
+			}
+			endpoints[endpointName] = endpoint
+		case "clustering":
+			endpoint, err := basicEndpoint(config.SenlinHost)
+			if err != nil {
+				return nil, err
+			}
+			endpoints[endpointName] = endpoint
+		case "cloudformation":
+			endpoint, err := basicEndpoint(config.HeatCloudFormationHost)
+			if err != nil {
+				return nil, err
+			}
+			endpoints[endpointName] = endpoint
+		case "compute":
+			endpoint, err := basicEndpoint(config.NovaHost)
+			if err != nil {
+				return nil, err
+			}
+			endpoints[endpointName] = endpoint
+		case "compute_metadata":
+			if config.NovaMetadataSecret == "" {
+				return nil, fmt.Errorf("nova metadata secret is required")
+			}
+
+			endpoints[endpointName] = map[string]interface{}{
+				"secret": config.NovaMetadataSecret,
+				"hosts": map[string]interface{}{
+					"public": "nova-metadata",
+				},
+				"port": map[string]interface{}{
+					"metadata": map[string]interface{}{
+						"public": 8775,
+					},
+				},
+			}
+		case "compute_novnc_proxy":
+			endpoint, err := basicEndpoint(config.NovaNovncHost)
+			if err != nil {
+				return nil, err
+			}
+			endpoint["path"] = map[string]interface{}{
+				"default": "/vnc_lite.html",
+			}
+			endpoints[endpointName] = endpoint
 		case "container_infra":
-			endpoint, err := basicEndpoint(config.MagnumAPIHost)
+			endpoint, err := basicEndpoint(config.MagnumHost)
 			if err != nil {
 				return nil, err
 			}
 			endpoints[endpointName] = endpoint
-		case "key_manager":
-			endpoint, err := basicEndpoint(config.BarbicanHost)
+		case "dashboard":
+			endpoint, err := basicEndpoint(config.HorizonHost)
 			if err != nil {
 				return nil, err
 			}
 			endpoints[endpointName] = endpoint
-		case "orchestration":
-			endpoint, err := basicEndpoint(config.HeatHost)
+		case "dns":
+			endpoint, err := basicEndpoint(config.DesignateHost)
 			if err != nil {
 				return nil, err
 			}
 			endpoints[endpointName] = endpoint
-		case "oslo_cache":
-			// TODO
-			endpoints[endpointName] = map[string]interface{}{
-				"auth": map[string]interface{}{
-					"memcache_secret_key": config.MemcacheSecretKey,
-				},
-			}
-		case "oslo_db":
-			auth, err := endpointAuth(endpointValues, map[string]string{
-				"admin":    config.DatabaseRootPassword,
-				"keystone": config.KeystoneDatabasePassword,
-				"magnum":   config.MagnumDatabasePassword,
-			})
-			if err != nil {
-				return nil, err
-			}
-
-			if config.DatabaseNamespace == "" {
-				return nil, fmt.Errorf("database namespace is required")
-			}
-			if config.DatabaseServiceName == "" {
-				return nil, fmt.Errorf("database service name is required")
-			}
-
-			endpoints[endpointName] = map[string]interface{}{
-				"auth":      auth,
-				"namespace": config.DatabaseNamespace,
-				"hosts": map[string]interface{}{
-					"default": config.DatabaseServiceName,
-				},
-			}
-		case "oslo_messaging":
-			auth, err := endpointAuth(endpointValues, map[string]string{
-				"admin":    config.RabbitmqAdminPassword,
-				"keystone": config.KeystoneRabbitmqPassword,
-				"magnum":   config.MagnumRabbitmqPassword,
-			})
-			if err != nil {
-				return nil, err
-			}
-
-			// NOTE(mnaser): RabbitMQ operator generates random usernames for the
-			//               admin user.
-			if config.RabbitmqAdminUsername == "" {
-				return nil, fmt.Errorf("rabbitmq admin username is required")
-			}
-			auth["admin"].(map[string]interface{})["username"] = config.RabbitmqAdminUsername
-
-			if config.RabbitmqNamespace == "" {
-				return nil, fmt.Errorf("rabbitmq namespace is required")
-			}
-			if config.RabbitmqServiceName == "" {
-				return nil, fmt.Errorf("rabbitmq service name is required")
-			}
-
-			endpoints[endpointName] = map[string]interface{}{
-				"auth":        auth,
-				"statefulset": nil,
-				"namespace":   config.RabbitmqNamespace,
-				"hosts": map[string]interface{}{
-					"default": config.RabbitmqServiceName,
-				},
-			}
 		case "identity":
 			auth, err := endpointAuth(endpointValues, map[string]string{
 				"admin":             config.KeystoneAdminPassword,
+				"barbican":          config.BarbicanKeystonePassword,
+				"glance":            config.GlanceKeystonePassword,
+				"cinder":            config.CinderKeystonePassword,
+				"placement":         config.PlacementKeystonePassword,
+				"neutron":           config.NeutronKeystonePassword,
+				"ironic":            config.IronicKeystonePassword,
+				"nova":              config.NovaKeystonePassword,
+				"senlin":            config.SenlinKeystonePassword,
+				"designate":         config.DesignateKeystonePassword,
+				"heat":              config.HeatKeystonePassword,
+				"heat_trustee":      config.HeatTrusteeKeystonePassword,
+				"heat_stack_user":   config.HeatStackUserKeystonePassword,
+				"octavia":           config.OctaviaKeystonePassword,
 				"magnum":            config.MagnumKeystonePassword,
 				"magnum_stack_user": config.MagnumKeystonePassword,
 			})
@@ -190,6 +198,139 @@ func ForChart(chart *chart.Chart, config *EndpointConfig) (map[string]interface{
 				},
 			}
 
+			endpoints[endpointName] = endpoint
+		case "image":
+			endpoint, err := basicEndpoint(config.GlanceHost)
+			if err != nil {
+				return nil, err
+			}
+			endpoints[endpointName] = endpoint
+		case "key_manager":
+			endpoint, err := basicEndpoint(config.BarbicanHost)
+			if err != nil {
+				return nil, err
+			}
+			endpoints[endpointName] = endpoint
+		case "load_balancer":
+			endpoint, err := basicEndpoint(config.OctaviaHost)
+			if err != nil {
+				return nil, err
+			}
+			endpoints[endpointName] = endpoint
+		case "mdns":
+			endpoint, err := basicEndpoint(config.DesignateHost)
+			if err != nil {
+				return nil, err
+			}
+			endpoints[endpointName] = endpoint
+		case "network":
+			endpoint, err := basicEndpoint(config.NeutronHost)
+			if err != nil {
+				return nil, err
+			}
+			endpoints[endpointName] = endpoint
+		case "orchestration":
+			endpoint, err := basicEndpoint(config.HeatHost)
+			if err != nil {
+				return nil, err
+			}
+			endpoints[endpointName] = endpoint
+		case "oslo_cache":
+			endpoints[endpointName] = map[string]interface{}{
+				"auth": map[string]interface{}{
+					"memcache_secret_key": config.MemcacheSecretKey,
+				},
+			}
+		case "oslo_db":
+		case "oslo_db_api":
+		case "oslo_db_cell0":
+			auth, err := endpointAuth(endpointValues, map[string]string{
+				"admin":     config.DatabaseRootPassword,
+				"keystone":  config.KeystoneDatabasePassword,
+				"barbican":  config.BarbicanDatabasePassword,
+				"glance":    config.GlanceDatabasePassword,
+				"cinder":    config.CinderDatabasePassword,
+				"placement": config.PlacementDatabasePassword,
+				"neutron":   config.NeutronDatabasePassword,
+				"nova":      config.NovaDatabasePassword,
+				"senlin":    config.SenlinDatabasePassword,
+				"designate": config.DesignateDatabasePassword,
+				"heat":      config.HeatDatabasePassword,
+				"octavia":   config.OctaviaDatabasePassword,
+				"magnum":    config.MagnumDatabasePassword,
+				"horizon":   config.HorizonDatabasePassword,
+			})
+			if err != nil {
+				return nil, err
+			}
+
+			if config.DatabaseNamespace == "" {
+				return nil, fmt.Errorf("database namespace is required")
+			}
+			if config.DatabaseServiceName == "" {
+				return nil, fmt.Errorf("database service name is required")
+			}
+
+			endpoints[endpointName] = map[string]interface{}{
+				"auth":      auth,
+				"namespace": config.DatabaseNamespace,
+				"hosts": map[string]interface{}{
+					"default": config.DatabaseServiceName,
+				},
+			}
+		case "oslo_messaging":
+			auth, err := endpointAuth(endpointValues, map[string]string{
+				"admin":     config.RabbitmqAdminPassword,
+				"keystone":  config.KeystoneRabbitmqPassword,
+				"barbican":  config.BarbicanRabbitmqPassword,
+				"glance":    config.GlanceRabbitmqPassword,
+				"cinder":    config.CinderRabbitmqPassword,
+				"placement": config.PlacementRabbitmqPassword,
+				"neutron":   config.NeutronRabbitmqPassword,
+				"nova":      config.NovaRabbitmqPassword,
+				"senlin":    config.SenlinRabbitmqPassword,
+				"designate": config.DesignateRabbitmqPassword,
+				"heat":      config.HeatRabbitmqPassword,
+				"octavia":   config.OctaviaRabbitmqPassword,
+				"magnum":    config.MagnumRabbitmqPassword,
+			})
+			if err != nil {
+				return nil, err
+			}
+
+			// NOTE(mnaser): RabbitMQ operator generates random usernames for the
+			//               admin user.
+			if config.RabbitmqAdminUsername == "" {
+				return nil, fmt.Errorf("rabbitmq admin username is required")
+			}
+			auth["admin"].(map[string]interface{})["username"] = config.RabbitmqAdminUsername
+
+			if config.RabbitmqNamespace == "" {
+				return nil, fmt.Errorf("rabbitmq namespace is required")
+			}
+			if config.RabbitmqServiceName == "" {
+				return nil, fmt.Errorf("rabbitmq service name is required")
+			}
+
+			endpoints[endpointName] = map[string]interface{}{
+				"auth":        auth,
+				"statefulset": nil,
+				"namespace":   config.RabbitmqNamespace,
+				"hosts": map[string]interface{}{
+					"default": config.RabbitmqServiceName,
+				},
+			}
+		case "placement":
+			endpoint, err := basicEndpoint(config.PlacementHost)
+			if err != nil {
+				return nil, err
+			}
+			endpoints[endpointName] = endpoint
+		case "volumev3":
+			endpoint, err := basicEndpoint(config.CinderHost)
+			if err != nil {
+				return nil, err
+			}
 			endpoints[endpointName] = endpoint
 		default:
 			return nil, fmt.Errorf("endpoint %s not supported", endpointName)

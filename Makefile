@@ -263,7 +263,21 @@ sync-charts:
 	cp -r ../openstack-helm-infra/helm-toolkit helm-charts/
 	cp -r ../openstack-helm-infra/memcached helm-charts/
 	cp -r ../openstack-helm/keystone helm-charts/
+	cp -r ../openstack-helm/barbican helm-charts/
+	cp -r ../openstack-helm-infra/ceph-provisioners helm-charts/
+	cp -r ../openstack-helm/glance helm-charts/
+	cp -r ../openstack-helm/cinder helm-charts/
+	cp -r ../openstack-helm/placement helm-charts/
+	cp -r ../openstack-helm-infra/openvswitch helm-charts/
+	cp -r ../openstack-helm-infra/libvirt helm-charts/
+	cp -r ../openstack-helm/neutron helm-charts/
+	cp -r ../openstack-helm/nova helm-charts/
+	cp -r ../openstack-helm/senlin helm-charts/
+	cp -r ../openstack-helm/designate helm-charts/
+	cp -r ../openstack-helm/heat helm-charts/
+	cp -r ../openstack-helm/octavia helm-charts/
 	cp -r ../openstack-helm/magnum helm-charts/
+	cp -r ../openstack-helm/horizon helm-charts/
 	sed -i 's%file://../../openstack-helm-infra/helm-toolkit%file://../helm-toolkit%' helm-charts/*/requirements.yaml 
 
 # Build a Helm chart
