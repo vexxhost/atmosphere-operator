@@ -54,7 +54,7 @@ func basicEndpoint(host string) (map[string]interface{}, error) {
 		},
 		"port": map[string]interface{}{
 			"api": map[string]interface{}{
-				"public": 443,
+				"public": float32(443),
 			},
 		},
 	}, nil
@@ -221,6 +221,10 @@ func ForChart(chart *chart.Chart, config *EndpointConfig) (map[string]interface{
 			}
 			endpoints[endpointName] = endpoint
 		case "oslo_cache":
+			if config.MemcacheSecretKey == "" {
+				return nil, fmt.Errorf("memcache secret key is required")
+			}
+
 			endpoints[endpointName] = map[string]interface{}{
 				"auth": map[string]interface{}{
 					"memcache_secret_key": config.MemcacheSecretKey,

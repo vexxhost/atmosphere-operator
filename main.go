@@ -109,6 +109,13 @@ func main() {
 		setupLog.Error(err, "unable to create controller", "controller", "Memcached")
 		os.Exit(1)
 	}
+	if err = (&infracontrollers.RabbitmqClusterReconciler{
+		Client: mgr.GetClient(),
+		Scheme: mgr.GetScheme(),
+	}).SetupWithManager(mgr); err != nil {
+		setupLog.Error(err, "unable to create controller", "controller", "RabbitmqCluster")
+		os.Exit(1)
+	}
 	if err = (&openstackcontrollers.KeystoneReconciler{
 		Client: mgr.GetClient(),
 		Scheme: mgr.GetScheme(),
@@ -116,11 +123,11 @@ func main() {
 		setupLog.Error(err, "unable to create controller", "controller", "Keystone")
 		os.Exit(1)
 	}
-	if err = (&infracontrollers.RabbitmqClusterReconciler{
+	if err = (&openstackcontrollers.BarbicanReconciler{
 		Client: mgr.GetClient(),
 		Scheme: mgr.GetScheme(),
 	}).SetupWithManager(mgr); err != nil {
-		setupLog.Error(err, "unable to create controller", "controller", "RabbitmqCluster")
+		setupLog.Error(err, "unable to create controller", "controller", "Barbican")
 		os.Exit(1)
 	}
 	//+kubebuilder:scaffold:builder

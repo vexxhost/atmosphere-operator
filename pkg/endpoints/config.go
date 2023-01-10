@@ -35,6 +35,7 @@ type EndpointConfig struct {
 	BarbicanDatabasePassword string
 	BarbicanRabbitmqPassword string
 	BarbicanKeystonePassword string
+	BarbicanKeyEncryptionKey string
 
 	GlanceHost             string
 	GlanceDatabasePassword string
@@ -184,10 +185,51 @@ func WithKeystone(ctx context.Context, c client.Client, keystone *openstackv1alp
 			return err
 		}
 
+		ec.MemcacheSecretKey = string(secret.Data["memcache"])
 		ec.KeystoneDatabasePassword = string(secret.Data["database"])
 		ec.KeystoneRabbitmqPassword = string(secret.Data["rabbitmq"])
 		ec.KeystoneAdminPassword = string(secret.Data["admin"])
+
+		return nil
+	}
+}
+
+func WithKeystoneRef(ctx context.Context, c client.Client, ref *openstackv1alpha1.NamespacedName) func(*EndpointConfig) error {
+	return func(ec *EndpointConfig) error {
+		keystone := &openstackv1alpha1.Keystone{}
+		if err := c.Get(ctx, ref.NativeNamespacedName(), keystone); err != nil {
+			return err
+		}
+
+		return WithKeystone(ctx, c, keystone)(ec)
+	}
+}
+
+func WithBarbican(ctx context.Context, c client.Client, barbican *openstackv1alpha1.Barbican) func(*EndpointConfig) error {
+	return func(ec *EndpointConfig) error {
+		databaseRef := barbican.Spec.DatabaseReference.WithNamespace(barbican.Namespace)
+		if err := WithDatabase(ctx, c, &databaseRef)(ec); err != nil {
+			return err
+		}
+
+		rabbitmqRef := barbican.Spec.RabbitmqReference.WithNamespace(barbican.Namespace)
+		if err := WithRabbitmq(ctx, c, &rabbitmqRef)(ec); err != nil {
+			return err
+		}
+
+		ec.RegionName = barbican.Spec.RegionName
+		ec.BarbicanHost = barbican.Spec.Ingress.Host
+
+		secret := &corev1.Secret{}
+		if err := c.Get(ctx, barbican.Spec.SecretsRef.WithNamespace(barbican.Namespace).NativeNamespacedName(), secret); err != nil {
+			return err
+		}
+
 		ec.MemcacheSecretKey = string(secret.Data["memcache"])
+		ec.BarbicanDatabasePassword = string(secret.Data["database"])
+		ec.BarbicanRabbitmqPassword = string(secret.Data["rabbitmq"])
+		ec.BarbicanKeystonePassword = string(secret.Data["keystone"])
+		ec.BarbicanKeyEncryptionKey = string(secret.Data["kek"])
 
 		return nil
 	}

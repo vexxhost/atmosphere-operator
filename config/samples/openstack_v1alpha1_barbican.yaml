@@ -1,36 +1,39 @@
 apiVersion: v1
 kind: Secret
 metadata:
-  name: keystone
+  name: barbican
 type: Opaque
 stringData:
   memcache: memcached
-  database: database
-  rabbitmq: rabbitmq
-  admin: admin
+  database: db123
+  rabbitmq: rabbit123
+  keystone: barbican123
+  kek: dGhpcnR5X3R3b19ieXRlX2tleWJsYWhibGFoYmxhaGg=
 ---
 apiVersion: infra.atmosphere.vexxhost.com/v1alpha1
 kind: RabbitmqCluster
 metadata:
-  name: keystone
+  name: barbican
 spec: {}
 ---
 apiVersion: openstack.atmosphere.vexxhost.com/v1alpha1
-kind: Keystone
+kind: Barbican
 metadata:
-  name: keystone
+  name: barbican
 spec:
   replicas: 1
   regionName: RegionOne
   ingress:
-    host: identity.cloud.vexxhost.com
+    host: key-manager.cloud.vexxhost.com
     className: nginx
-  secretsRef:
+  keystoneRef:
     name: keystone
+  secretsRef:
+    name: barbican
   databaseRef:
     name: percona-xtradb
   rabbitmqRef:
-    name: keystone
+    name: barbican
   overrides:
     conf:
       keystone:

@@ -25,7 +25,7 @@ func TestBasicEndpoint(t *testing.T) {
 		},
 		"port": map[string]interface{}{
 			"api": map[string]interface{}{
-				"public": 443,
+				"public": float32(443),
 			},
 		},
 	}, endpoint)

@@ -169,6 +169,32 @@ rules:
 - apiGroups:
   - openstack.atmosphere.vexxhost.com
   resources:
+  - barbicans
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - openstack.atmosphere.vexxhost.com
+  resources:
+  - barbicans/finalizers
+  verbs:
+  - update
+- apiGroups:
+  - openstack.atmosphere.vexxhost.com
+  resources:
+  - barbicans/status
+  verbs:
+  - get
+  - patch
+  - update
+- apiGroups:
+  - openstack.atmosphere.vexxhost.com
+  resources:
   - keystones
   verbs:
   - create
