@@ -72,7 +72,6 @@ func TestForChart(t *testing.T) {
 		CinderKeystonePassword:        "cinder-keystone",
 		PlacementHost:                 "placement.atmosphere.vexxhost.com",
 		PlacementDatabasePassword:     "db-placement",
-		PlacementRabbitmqPassword:     "rabbitmq-placement",
 		PlacementKeystonePassword:     "placement-keystone",
 		NeutronHost:                   "networking.atmosphere.vexxhost.com",
 		NeutronDatabasePassword:       "db-neutron",
@@ -253,8 +252,6 @@ func TestForChart(t *testing.T) {
 						assert.Equal(t, config.GlanceRabbitmqPassword, auth["glance"].(map[string]interface{})["password"])
 					} else if tc.Name() == "cinder" {
 						assert.Equal(t, config.CinderRabbitmqPassword, auth["cinder"].(map[string]interface{})["password"])
-					} else if tc.Name() == "placement" {
-						assert.Equal(t, config.PlacementRabbitmqPassword, auth["placement"].(map[string]interface{})["password"])
 					} else if tc.Name() == "neutron" {
 						assert.Equal(t, config.NeutronRabbitmqPassword, auth["neutron"].(map[string]interface{})["password"])
 					} else if tc.Name() == "nova" {

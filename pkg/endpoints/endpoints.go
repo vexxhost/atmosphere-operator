@@ -8,7 +8,7 @@ import (
 )
 
 func endpointAuthUsers(endpoint interface{}) []string {
-	skipList := []string{"test"}
+	skipList := []string{"nova_api", "test"}
 	keys := []string{}
 
 	for k := range endpoint.(map[string]interface{})["auth"].(map[string]interface{}) {
@@ -273,7 +273,6 @@ func ForChart(chart *chart.Chart, config *EndpointConfig) (map[string]interface{
 				"barbican":  config.BarbicanRabbitmqPassword,
 				"glance":    config.GlanceRabbitmqPassword,
 				"cinder":    config.CinderRabbitmqPassword,
-				"placement": config.PlacementRabbitmqPassword,
 				"neutron":   config.NeutronRabbitmqPassword,
 				"nova":      config.NovaRabbitmqPassword,
 				"senlin":    config.SenlinRabbitmqPassword,

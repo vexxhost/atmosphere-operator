@@ -49,7 +49,6 @@ type EndpointConfig struct {
 
 	PlacementHost             string
 	PlacementDatabasePassword string
-	PlacementRabbitmqPassword string
 	PlacementKeystonePassword string
 
 	NeutronHost             string
@@ -234,3 +233,41 @@ func WithBarbican(ctx context.Context, c client.Client, barbican *openstackv1alp
 		return nil
 	}
 }
+
+// TODO: ceph
+// TODO: glance
+// TODO: cinder
+
+func WithPlacement(ctx context.Context, c client.Client, placement *openstackv1alpha1.Placement) func(*EndpointConfig) error {
+	return func(ec *EndpointConfig) error {
+		databaseRef := placement.Spec.DatabaseReference.WithNamespace(placement.Namespace)
+		if err := WithDatabase(ctx, c, &databaseRef)(ec); err != nil {
+			return err
+		}
+
+		ec.RegionName = placement.Spec.RegionName
+		ec.PlacementHost = placement.Spec.Ingress.Host
+
+		secret := &corev1.Secret{}
+		if err := c.Get(ctx, placement.Spec.SecretsRef.WithNamespace(placement.Namespace).NativeNamespacedName(), secret); err != nil {
+			return err
+		}
+
+		ec.MemcacheSecretKey = string(secret.Data["memcache"])
+		ec.PlacementDatabasePassword = string(secret.Data["database"])
+		ec.PlacementKeystonePassword = string(secret.Data["keystone"])
+
+		return nil
+	}
+}
+
+// TODO: ovs
+// TODO: libvirt
+// TODO: neutron
+// TODO: nova
+// TODO: senlin
+// TODO: designate
+// TODO: heat
+// TODO: octavia
+// TODO: magnum
+// TODO: horizon

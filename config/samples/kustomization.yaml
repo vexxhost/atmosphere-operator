@@ -4,4 +4,5 @@ resources:
 - openstack_v1alpha1_keystone.yaml
 - infra_v1alpha1_rabbitmqcluster.yaml
 - openstack_v1alpha1_barbican.yaml
+- openstack_v1alpha1_placement.yaml
 #+kubebuilder:scaffold:manifestskustomizesamples

@@ -130,6 +130,26 @@ func main() {
 		setupLog.Error(err, "unable to create controller", "controller", "Barbican")
 		os.Exit(1)
 	}
+	// TODO: ceph_provisioners
+	// TODO: glance
+	// TODO: cinder
+	if err = (&openstackcontrollers.PlacementReconciler{
+		Client: mgr.GetClient(),
+		Scheme: mgr.GetScheme(),
+	}).SetupWithManager(mgr); err != nil {
+		setupLog.Error(err, "unable to create controller", "controller", "Placement")
+		os.Exit(1)
+	}
+	// TODO: ovs
+	// TODO: libvirt
+	// TODO: neutron
+	// TODO: nova
+	// TODO: senlin
+	// TODO: designate
+	// TODO: heat
+	// TODO: octavia
+	// TODO: magnum
+	// TODO: horizon
 	//+kubebuilder:scaffold:builder
 
 	if err := mgr.AddHealthzCheck("healthz", healthz.Ping); err != nil {

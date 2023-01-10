@@ -132,10 +132,12 @@ func (r *RabbitmqClusterReconciler) Reconcile(ctx context.Context, req ctrl.Requ
 		return ctrl.Result{}, err
 	}
 
-	if cluster.Status.DefaultUser != nil {
-		rabbitmq.Status.DefaultUser = *cluster.Status.DefaultUser
-		err = r.Status().Update(ctx, rabbitmq)
+	if cluster.Status.DefaultUser == nil {
+		return ctrl.Result{Requeue: true}, nil
 	}
+
+	rabbitmq.Status.DefaultUser = *cluster.Status.DefaultUser
+	err = r.Status().Update(ctx, rabbitmq)
 
 	return ctrl.Result{}, err
 }

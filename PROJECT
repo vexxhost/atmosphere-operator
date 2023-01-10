@@ -44,4 +44,26 @@ resources:
   kind: Barbican
   path: github.com/vexxhost/atmosphere-operator/apis/openstack/v1alpha1
   version: v1alpha1
+# // TODO: ceph_provisioners
+# // TODO: glance
+# // TODO: cinder
+- api:
+    crdVersion: v1
+    namespaced: true
+  controller: true
+  domain: atmosphere.vexxhost.com
+  group: openstack
+  kind: Placement
+  path: github.com/vexxhost/atmosphere-operator/apis/openstack/v1alpha1
+  version: v1alpha1
+# // TODO: ovs
+# // TODO: libvirt
+# // TODO: neutron
+# // TODO: nova
+# // TODO: senlin
+# // TODO: designate
+# // TODO: heat
+# // TODO: octavia
+# // TODO: magnum
+# // TODO: horizon
 version: "3"

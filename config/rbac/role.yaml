@@ -219,6 +219,32 @@ rules:
   - patch
   - update
 - apiGroups:
+  - openstack.atmosphere.vexxhost.com
+  resources:
+  - placements
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - openstack.atmosphere.vexxhost.com
+  resources:
+  - placements/finalizers
+  verbs:
+  - update
+- apiGroups:
+  - openstack.atmosphere.vexxhost.com
+  resources:
+  - placements/status
+  verbs:
+  - get
+  - patch
+  - update
+- apiGroups:
   - policy
   resources:
   - poddisruptionbudgets

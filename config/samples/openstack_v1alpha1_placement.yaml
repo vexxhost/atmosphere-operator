@@ -1,0 +1,38 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: placement
+type: Opaque
+stringData:
+  memcache: memcached
+  database: db123
+  rabbitmq: rabbit123
+  keystone: placement123
+---
+apiVersion: infra.atmosphere.vexxhost.com/v1alpha1
+kind: RabbitmqCluster
+metadata:
+  name: placement
+spec: {}
+---
+apiVersion: openstack.atmosphere.vexxhost.com/v1alpha1
+kind: Placement
+metadata:
+  name: placement
+spec:
+  replicas: 1
+  regionName: RegionOne
+  ingress:
+    host: placement.cloud.vexxhost.com
+    className: nginx
+  keystoneRef:
+    name: keystone
+  secretsRef:
+    name: barbican
+  databaseRef:
+    name: percona-xtradb
+  overrides:
+    conf:
+      keystone:
+        DEFAULT:
+          foo: bar
