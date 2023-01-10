@@ -9,7 +9,7 @@ metadata:
     app.kubernetes.io/name: namespace
     app.kubernetes.io/part-of: atmosphere-operator
     control-plane: controller-manager
-  name: atmosphere-operator-system
+  name: atmosphere-system
 ---
 apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
@@ -253,8 +253,8 @@ metadata:
     app.kubernetes.io/managed-by: kustomize
     app.kubernetes.io/name: serviceaccount
     app.kubernetes.io/part-of: atmosphere-operator
-  name: atmosphere-operator-controller-manager
-  namespace: atmosphere-operator-system
+  name: atmosphere-controller-manager
+  namespace: atmosphere-system
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
@@ -266,8 +266,8 @@ metadata:
     app.kubernetes.io/managed-by: kustomize
     app.kubernetes.io/name: role
     app.kubernetes.io/part-of: atmosphere-operator
-  name: atmosphere-operator-leader-election-role
-  namespace: atmosphere-operator-system
+  name: atmosphere-leader-election-role
+  namespace: atmosphere-system
 rules:
 - apiGroups:
   - ""
@@ -305,7 +305,7 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
   creationTimestamp: null
-  name: atmosphere-operator-manager-role
+  name: atmosphere-manager-role
 rules:
 - apiGroups:
   - ""
@@ -432,7 +432,7 @@ metadata:
     app.kubernetes.io/managed-by: kustomize
     app.kubernetes.io/name: clusterrole
     app.kubernetes.io/part-of: atmosphere-operator
-  name: atmosphere-operator-metrics-reader
+  name: atmosphere-metrics-reader
 rules:
 - nonResourceURLs:
   - /metrics
@@ -449,7 +449,7 @@ metadata:
     app.kubernetes.io/managed-by: kustomize
     app.kubernetes.io/name: clusterrole
     app.kubernetes.io/part-of: atmosphere-operator
-  name: atmosphere-operator-proxy-role
+  name: atmosphere-proxy-role
 rules:
 - apiGroups:
   - authentication.k8s.io
@@ -474,16 +474,16 @@ metadata:
     app.kubernetes.io/managed-by: kustomize
     app.kubernetes.io/name: rolebinding
     app.kubernetes.io/part-of: atmosphere-operator
-  name: atmosphere-operator-leader-election-rolebinding
-  namespace: atmosphere-operator-system
+  name: atmosphere-leader-election-rolebinding
+  namespace: atmosphere-system
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
-  name: atmosphere-operator-leader-election-role
+  name: atmosphere-leader-election-role
 subjects:
 - kind: ServiceAccount
-  name: atmosphere-operator-controller-manager
-  namespace: atmosphere-operator-system
+  name: atmosphere-controller-manager
+  namespace: atmosphere-system
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
@@ -495,15 +495,15 @@ metadata:
     app.kubernetes.io/managed-by: kustomize
     app.kubernetes.io/name: clusterrolebinding
     app.kubernetes.io/part-of: atmosphere-operator
-  name: atmosphere-operator-manager-rolebinding
+  name: atmosphere-manager-rolebinding
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
-  name: atmosphere-operator-manager-role
+  name: atmosphere-manager-role
 subjects:
 - kind: ServiceAccount
-  name: atmosphere-operator-controller-manager
-  namespace: atmosphere-operator-system
+  name: atmosphere-controller-manager
+  namespace: atmosphere-system
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
@@ -515,15 +515,15 @@ metadata:
     app.kubernetes.io/managed-by: kustomize
     app.kubernetes.io/name: clusterrolebinding
     app.kubernetes.io/part-of: atmosphere-operator
-  name: atmosphere-operator-proxy-rolebinding
+  name: atmosphere-proxy-rolebinding
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
-  name: atmosphere-operator-proxy-role
+  name: atmosphere-proxy-role
 subjects:
 - kind: ServiceAccount
-  name: atmosphere-operator-controller-manager
-  namespace: atmosphere-operator-system
+  name: atmosphere-controller-manager
+  namespace: atmosphere-system
 ---
 apiVersion: v1
 kind: Service
@@ -536,8 +536,8 @@ metadata:
     app.kubernetes.io/name: service
     app.kubernetes.io/part-of: atmosphere-operator
     control-plane: controller-manager
-  name: atmosphere-operator-controller-manager-metrics-service
-  namespace: atmosphere-operator-system
+  name: atmosphere-controller-manager-metrics-service
+  namespace: atmosphere-system
 spec:
   ports:
   - name: https
@@ -558,8 +558,8 @@ metadata:
     app.kubernetes.io/name: deployment
     app.kubernetes.io/part-of: atmosphere-operator
     control-plane: controller-manager
-  name: atmosphere-operator-controller-manager
-  namespace: atmosphere-operator-system
+  name: atmosphere-controller-manager
+  namespace: atmosphere-system
 spec:
   replicas: 1
   selector:
@@ -646,5 +646,5 @@ spec:
             - ALL
       securityContext:
         runAsNonRoot: true
-      serviceAccountName: atmosphere-operator-controller-manager
+      serviceAccountName: atmosphere-controller-manager
       terminationGracePeriodSeconds: 10
