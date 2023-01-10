@@ -3,4 +3,5 @@ resources:
 - infra_v1alpha1_memcached.yaml
 - openstack_v1alpha1_keystone.yaml
 - infra_v1alpha1_rabbitmqcluster.yaml
+- infra_v1alpha1_database.yaml
 #+kubebuilder:scaffold:manifestskustomizesamples
