@@ -273,7 +273,7 @@ func TestForChart(t *testing.T) {
 						t.Errorf("untested rabbitmq configuration for %s", tc.Name())
 					}
 
-					assert.Equal(t, nil, endpoints[endpoint].(map[string]interface{})["statefulset"])
+					assert.Equal(t, false, endpoints[endpoint].(map[string]interface{})["statefulset"])
 					assert.Equal(t, config.RabbitmqNamespace, endpoints[endpoint].(map[string]interface{})["namespace"])
 					assert.Equal(t, config.RabbitmqServiceName, endpoints[endpoint].(map[string]interface{})["hosts"].(map[string]interface{})["default"])
 				case "placement":

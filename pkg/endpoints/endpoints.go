@@ -302,7 +302,7 @@ func ForChart(chart *chart.Chart, config *EndpointConfig) (map[string]interface{
 
 			endpoints[endpointName] = map[string]interface{}{
 				"auth":        auth,
-				"statefulset": nil,
+				"statefulset": false,
 				"namespace":   config.RabbitmqNamespace,
 				"hosts": map[string]interface{}{
 					"default": config.RabbitmqServiceName,
