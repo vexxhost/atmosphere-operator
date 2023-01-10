@@ -37,9 +37,14 @@ func GenerateIngress(ingress *networkingv1.Ingress, config *openstackv1alpha1.In
 		},
 	}
 
+	secretName := ingress.GetName() + "-certs"
+	if config.TLS.SecretName != "" {
+		secretName = config.TLS.SecretName
+	}
+
 	ingress.Spec.TLS = []networkingv1.IngressTLS{
 		{
-			SecretName: ingress.GetName() + "-certs",
+			SecretName: secretName,
 			Hosts:      []string{config.Host},
 		},
 	}

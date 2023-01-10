@@ -18,7 +18,6 @@ package openstack
 
 import (
 	"context"
-	"fmt"
 
 	"helm.sh/helm/v3/pkg/chart/loader"
 	"helm.sh/helm/v3/pkg/chartutil"
@@ -138,7 +137,6 @@ func (r *KeystoneReconciler) SetupWithManager(mgr ctrl.Manager) error {
 		if err != nil {
 			return nil, err
 		}
-		fmt.Println(overrides)
 
 		return chartutil.CoalesceTables(values, overrides), nil
 	})

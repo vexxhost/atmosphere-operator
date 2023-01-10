@@ -3,6 +3,7 @@ package v1alpha1
 import (
 	"encoding/json"
 
+	networkingv1 "k8s.io/api/networking/v1"
 	runtime "k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/types"
 )
@@ -28,10 +29,11 @@ func (n NamespacedName) NativeNamespacedName() types.NamespacedName {
 }
 
 type IngressConfig struct {
-	Host        string            `json:"host"`
-	ClassName   string            `json:"className"`
-	Labels      map[string]string `json:"labels,omitempty"`
-	Annotations map[string]string `json:"annotations,omitempty"`
+	Host        string                  `json:"host"`
+	ClassName   string                  `json:"className"`
+	Labels      map[string]string       `json:"labels,omitempty"`
+	Annotations map[string]string       `json:"annotations,omitempty"`
+	TLS         networkingv1.IngressTLS `json:"tls,omitempty"`
 }
 
 type HelmOverrides map[string]runtime.RawExtension
