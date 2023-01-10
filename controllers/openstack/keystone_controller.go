@@ -47,10 +47,12 @@ type KeystoneReconciler struct {
 	Scheme *runtime.Scheme
 }
 
+//+kubebuilder:rbac:groups=core,resources=secrets,verbs=get;list
 //+kubebuilder:rbac:groups=openstack.atmosphere.vexxhost.com,resources=keystones,verbs=get;list;watch;create;update;patch;delete
 //+kubebuilder:rbac:groups=openstack.atmosphere.vexxhost.com,resources=keystones/status,verbs=get;update;patch
 //+kubebuilder:rbac:groups=openstack.atmosphere.vexxhost.com,resources=keystones/finalizers,verbs=update
 //+kubebuilder:rbac:groups=infra.atmosphere.vexxhost.com,resources=rabbitmqclusters,verbs=get;list;watch;create;update;patch
+//+kubebuilder:rbac:groups=pxc.percona.com,resources=perconaxtradbclusters,verbs=get;list
 
 // SetupWithManager sets up the controller with the Manager.
 func (r *KeystoneReconciler) SetupWithManager(mgr ctrl.Manager) error {
