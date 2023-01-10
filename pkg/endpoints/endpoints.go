@@ -26,7 +26,7 @@ func endpointAuth(endpoint interface{}, passwords map[string]string) (map[string
 
 	for _, user := range endpointAuthUsers(endpoint) {
 		password, ok := passwords[user]
-		if !ok {
+		if !ok || password == "" {
 			return nil, fmt.Errorf("password for user %s missing", user)
 		}
 
@@ -68,6 +68,13 @@ func ForChart(chart *chart.Chart, config *EndpointConfig) (map[string]interface{
 				return nil, err
 			}
 
+			if config.DatabaseNamespace == "" {
+				return nil, fmt.Errorf("database namespace is required")
+			}
+			if config.DatabaseServiceName == "" {
+				return nil, fmt.Errorf("database service name is required")
+			}
+
 			endpoints[endpointName] = map[string]interface{}{
 				"auth":      auth,
 				"namespace": config.DatabaseNamespace,
@@ -86,7 +93,17 @@ func ForChart(chart *chart.Chart, config *EndpointConfig) (map[string]interface{
 
 			// NOTE(mnaser): RabbitMQ operator generates random usernames for the
 			//               admin user.
+			if config.RabbitmqAdminUsername == "" {
+				return nil, fmt.Errorf("rabbitmq admin username is required")
+			}
 			auth["admin"].(map[string]interface{})["username"] = config.RabbitmqAdminUsername
+
+			if config.RabbitmqNamespace == "" {
+				return nil, fmt.Errorf("rabbitmq namespace is required")
+			}
+			if config.RabbitmqServiceName == "" {
+				return nil, fmt.Errorf("rabbitmq service name is required")
+			}
 
 			endpoints[endpointName] = map[string]interface{}{
 				"auth":        auth,
@@ -104,9 +121,17 @@ func ForChart(chart *chart.Chart, config *EndpointConfig) (map[string]interface{
 				return nil, err
 			}
 
+			if config.RegionName == "" {
+				return nil, fmt.Errorf("region name is required")
+			}
+
 			for _, user := range endpointAuthUsers(endpointValues) {
 				auth[user].(map[string]interface{})["region_name"] = config.RegionName
 				auth[user].(map[string]interface{})["username"] = fmt.Sprintf("%s-%s", user, config.RegionName)
+			}
+
+			if config.KeystoneHost == "" {
+				return nil, fmt.Errorf("keystone host is required")
 			}
 
 			endpoints[endpointName] = map[string]interface{}{
