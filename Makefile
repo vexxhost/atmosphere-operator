@@ -277,3 +277,7 @@ charts: $(patsubst %,%.tgz,$(CHARTS))
 # Build a deployment manifest
 deploy-manifest:
 	$(KUSTOMIZE) build config/default > bundle.yaml
+
+# Deploy sample resources
+deploy-sample-resources:
+	$(KUSTOMIZE) build config/sample | kubectl apply -f -

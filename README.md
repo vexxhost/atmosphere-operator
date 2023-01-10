@@ -7,24 +7,36 @@
 ## Getting Started
 You’ll need a Kubernetes cluster to run against. You can use [KIND](https://sigs.k8s.io/kind) to get a local cluster for testing, or run against a remote cluster.
 **Note:** Your controller will automatically use the current context in your kubeconfig file (i.e. whatever cluster `kubectl cluster-info` shows).
-
-### Running on the cluster
-1. Install Instances of Custom Resources:
-
+### Pre-requisites
+- Install Rabbitmq cluster operator
 ```sh
-kubectl apply -f config/samples/
+helm repo add bitnami https://charts.bitnami.com/bitnami
+helm install rabbitmq-cluster-operator bitnami/rabbitmq-cluster-operator
+```
+- Install Percona Xtradb cluster operator
+```sh
+helm repo add percona https://percona.github.io/percona-helm-charts/
+helm repo update
+helm install pxc-operator percona/pxc-operator
 ```
 
-2. Build and push your image to the location specified by `IMG`:
+### Running on the cluster
+1. Build and push your image to the location specified by `IMG`:
 	
 ```sh
 make docker-build docker-push IMG=<some-registry>/atmosphere-operator:tag
 ```
 	
-3. Deploy the controller to the cluster with the image specified by `IMG`:
+2. Deploy the controller to the cluster with the image specified by `IMG`:
 
 ```sh
 make deploy IMG=<some-registry>/atmosphere-operator:tag
+```
+
+3. Install Instances of Custom Resources:
+
+```sh
+make deploy-sample-resources
 ```
 
 ### Uninstall CRDs
