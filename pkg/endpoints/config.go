@@ -30,6 +30,15 @@ type EndpointConfig struct {
 	KeystoneDatabasePassword string
 	KeystoneRabbitmqPassword string
 	KeystoneAdminPassword    string
+
+	BarbicanHost string
+
+	HeatHost string
+
+	MagnumAPIHost          string
+	MagnumDatabasePassword string
+	MagnumRabbitmqPassword string
+	MagnumKeystonePassword string
 }
 
 func NewConfig(options ...func(*EndpointConfig) error) (*EndpointConfig, error) {

@@ -38,6 +38,28 @@ func endpointAuth(endpoint interface{}, passwords map[string]string) (map[string
 	return auth, nil
 }
 
+func basicEndpoint(host string) (map[string]interface{}, error) {
+	if host == "" {
+		return nil, fmt.Errorf("host is required")
+	}
+
+	return map[string]interface{}{
+		"scheme": map[string]interface{}{
+			"public": "https",
+		},
+		"host_fqdn_override": map[string]interface{}{
+			"public": map[string]interface{}{
+				"host": host,
+			},
+		},
+		"port": map[string]interface{}{
+			"api": map[string]interface{}{
+				"public": 443,
+			},
+		},
+	}, nil
+}
+
 func ForChart(chart *chart.Chart, config *EndpointConfig) (map[string]interface{}, error) {
 	endpoints := make(map[string]interface{})
 	chartEndpoints := chart.Values["endpoints"].(map[string]interface{})
@@ -52,6 +74,24 @@ func ForChart(chart *chart.Chart, config *EndpointConfig) (map[string]interface{
 		case "oci_image_registry":
 		case "fluentd":
 			continue
+		case "container_infra":
+			endpoint, err := basicEndpoint(config.MagnumAPIHost)
+			if err != nil {
+				return nil, err
+			}
+			endpoints[endpointName] = endpoint
+		case "key_manager":
+			endpoint, err := basicEndpoint(config.BarbicanHost)
+			if err != nil {
+				return nil, err
+			}
+			endpoints[endpointName] = endpoint
+		case "orchestration":
+			endpoint, err := basicEndpoint(config.HeatHost)
+			if err != nil {
+				return nil, err
+			}
+			endpoints[endpointName] = endpoint
 		case "oslo_cache":
 			// TODO
 			endpoints[endpointName] = map[string]interface{}{
@@ -63,6 +103,7 @@ func ForChart(chart *chart.Chart, config *EndpointConfig) (map[string]interface{
 			auth, err := endpointAuth(endpointValues, map[string]string{
 				"admin":    config.DatabaseRootPassword,
 				"keystone": config.KeystoneDatabasePassword,
+				"magnum":   config.MagnumDatabasePassword,
 			})
 			if err != nil {
 				return nil, err
@@ -86,6 +127,7 @@ func ForChart(chart *chart.Chart, config *EndpointConfig) (map[string]interface{
 			auth, err := endpointAuth(endpointValues, map[string]string{
 				"admin":    config.RabbitmqAdminPassword,
 				"keystone": config.KeystoneRabbitmqPassword,
+				"magnum":   config.MagnumRabbitmqPassword,
 			})
 			if err != nil {
 				return nil, err
@@ -115,7 +157,9 @@ func ForChart(chart *chart.Chart, config *EndpointConfig) (map[string]interface{
 			}
 		case "identity":
 			auth, err := endpointAuth(endpointValues, map[string]string{
-				"admin": config.KeystoneAdminPassword,
+				"admin":             config.KeystoneAdminPassword,
+				"magnum":            config.MagnumKeystonePassword,
+				"magnum_stack_user": config.MagnumKeystonePassword,
 			})
 			if err != nil {
 				return nil, err
@@ -130,30 +174,23 @@ func ForChart(chart *chart.Chart, config *EndpointConfig) (map[string]interface{
 				auth[user].(map[string]interface{})["username"] = fmt.Sprintf("%s-%s", user, config.RegionName)
 			}
 
-			if config.KeystoneHost == "" {
-				return nil, fmt.Errorf("keystone host is required")
+			endpoint, err := basicEndpoint(config.KeystoneHost)
+			if err != nil {
+				return nil, err
 			}
 
-			endpoints[endpointName] = map[string]interface{}{
-				"auth": auth,
-				"hosts": map[string]interface{}{
-					"default": "keystone-api",
-				},
-				"scheme": map[string]interface{}{
-					"public": "https",
-				},
-				"host_fqdn_override": map[string]interface{}{
-					"public": map[string]interface{}{
-						"host": config.KeystoneHost,
-					},
-				},
-				"port": map[string]interface{}{
-					"api": map[string]interface{}{
-						"default": 5000,
-						"public":  443,
-					},
+			endpoint["auth"] = auth
+			endpoint["hosts"] = map[string]interface{}{
+				"default": "keystone-api",
+			}
+			endpoint["port"] = map[string]interface{}{
+				"api": map[string]interface{}{
+					"default": 5000,
+					"public":  443,
 				},
 			}
+
+			endpoints[endpointName] = endpoint
 		default:
 			return nil, fmt.Errorf("endpoint %s not supported", endpointName)
 		}

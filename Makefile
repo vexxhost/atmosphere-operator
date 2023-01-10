@@ -263,6 +263,7 @@ sync-charts:
 	cp -r ../openstack-helm-infra/helm-toolkit helm-charts/
 	cp -r ../openstack-helm-infra/memcached helm-charts/
 	cp -r ../openstack-helm/keystone helm-charts/
+	cp -r ../openstack-helm/magnum helm-charts/
 	sed -i 's%file://../../openstack-helm-infra/helm-toolkit%file://../helm-toolkit%' helm-charts/*/requirements.yaml 
 
 # Build a Helm chart

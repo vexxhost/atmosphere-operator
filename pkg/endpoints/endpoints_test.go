@@ -10,6 +10,36 @@ import (
 	"helm.sh/helm/v3/pkg/chart/loader"
 )
 
+func TestBasicEndpoint(t *testing.T) {
+	endpoint, err := basicEndpoint("cloud.atmosphere.vexxhost.com")
+	require.NoError(t, err)
+
+	assert.Equal(t, map[string]interface{}{
+		"scheme": map[string]interface{}{
+			"public": "https",
+		},
+		"host_fqdn_override": map[string]interface{}{
+			"public": map[string]interface{}{
+				"host": "cloud.atmosphere.vexxhost.com",
+			},
+		},
+		"port": map[string]interface{}{
+			"api": map[string]interface{}{
+				"public": 443,
+			},
+		},
+	}, endpoint)
+}
+
+func TestTestBasicEndpointWithEmptyHost(t *testing.T) {
+	_, err := basicEndpoint("")
+	require.Error(t, err)
+}
+
+func assertEndpointHostFQDNOverride(t *testing.T, expected string, endpoints interface{}) {
+	assert.Equal(t, expected, endpoints.(map[string]interface{})["host_fqdn_override"].(map[string]interface{})["public"].(map[string]interface{})["host"])
+}
+
 func TestForChart(t *testing.T) {
 	folders, err := os.ReadDir("testdata/helm-charts")
 	require.NoError(t, err)
@@ -28,6 +58,12 @@ func TestForChart(t *testing.T) {
 		KeystoneDatabasePassword: "db-keystone",
 		KeystoneRabbitmqPassword: "rabbitmq-keystone",
 		KeystoneAdminPassword:    "keystone-admin",
+		BarbicanHost:             "key-manager.atmosphere.vexxhost.com",
+		HeatHost:                 "orchestration.atmosphere.vexxhost.com",
+		MagnumAPIHost:            "container-infra.atmosphere.vexxhost.com",
+		MagnumDatabasePassword:   "db-magnum",
+		MagnumRabbitmqPassword:   "rabbitmq-magnum",
+		MagnumKeystonePassword:   "magnum-keystone",
 	}
 
 	for _, tc := range folders {
@@ -44,29 +80,64 @@ func TestForChart(t *testing.T) {
 
 			for endpoint := range endpoints {
 				switch endpoint {
+				case "container_infra":
+					assertEndpointHostFQDNOverride(t, config.MagnumAPIHost, endpoints["container_infra"])
+				case "key_manager":
+					assertEndpointHostFQDNOverride(t, config.BarbicanHost, endpoints["key_manager"])
+				case "orchestration":
+					assertEndpointHostFQDNOverride(t, config.HeatHost, endpoints["orchestration"])
 				case "oslo_cache":
 					assert.Equal(t, config.MemcacheSecretKey, endpoints["oslo_cache"].(map[string]interface{})["auth"].(map[string]interface{})["memcache_secret_key"])
 				case "oslo_db":
-					assert.Equal(t, config.DatabaseRootPassword, endpoints[endpoint].(map[string]interface{})["auth"].(map[string]interface{})["admin"].(map[string]interface{})["password"])
-					assert.Equal(t, config.KeystoneDatabasePassword, endpoints[endpoint].(map[string]interface{})["auth"].(map[string]interface{})["keystone"].(map[string]interface{})["password"])
+					auth := endpoints[endpoint].(map[string]interface{})["auth"].(map[string]interface{})
+
+					assert.Equal(t, config.DatabaseRootPassword, auth["admin"].(map[string]interface{})["password"])
+
+					if tc.Name() == "keystone" {
+						assert.Equal(t, config.KeystoneDatabasePassword, auth["keystone"].(map[string]interface{})["password"])
+					} else if tc.Name() == "magnum" {
+						assert.Equal(t, config.MagnumDatabasePassword, auth["magnum"].(map[string]interface{})["password"])
+					} else {
+						t.Errorf("untested database configuration for %s", tc.Name())
+					}
+
 					assert.Equal(t, config.DatabaseNamespace, endpoints[endpoint].(map[string]interface{})["namespace"])
 					assert.Equal(t, config.DatabaseServiceName, endpoints[endpoint].(map[string]interface{})["hosts"].(map[string]interface{})["default"])
 				case "oslo_messaging":
-					assert.Equal(t, config.RabbitmqAdminUsername, endpoints[endpoint].(map[string]interface{})["auth"].(map[string]interface{})["admin"].(map[string]interface{})["username"])
-					assert.Equal(t, config.RabbitmqAdminPassword, endpoints[endpoint].(map[string]interface{})["auth"].(map[string]interface{})["admin"].(map[string]interface{})["password"])
-					assert.Equal(t, config.KeystoneRabbitmqPassword, endpoints[endpoint].(map[string]interface{})["auth"].(map[string]interface{})["keystone"].(map[string]interface{})["password"])
+					auth := endpoints[endpoint].(map[string]interface{})["auth"].(map[string]interface{})
+
+					assert.Equal(t, config.RabbitmqAdminUsername, auth["admin"].(map[string]interface{})["username"])
+					assert.Equal(t, config.RabbitmqAdminPassword, auth["admin"].(map[string]interface{})["password"])
+
+					if tc.Name() == "keystone" {
+						assert.Equal(t, config.KeystoneRabbitmqPassword, auth["keystone"].(map[string]interface{})["password"])
+					} else if tc.Name() == "magnum" {
+						assert.Equal(t, config.MagnumRabbitmqPassword, auth["magnum"].(map[string]interface{})["password"])
+					} else {
+						t.Errorf("untested rabbitmq configuration for %s", tc.Name())
+					}
+
 					assert.Equal(t, nil, endpoints[endpoint].(map[string]interface{})["statefulset"])
 					assert.Equal(t, config.RabbitmqNamespace, endpoints[endpoint].(map[string]interface{})["namespace"])
 					assert.Equal(t, config.RabbitmqServiceName, endpoints[endpoint].(map[string]interface{})["hosts"].(map[string]interface{})["default"])
 				case "identity":
-					assert.Equal(t, config.RegionName, endpoints[endpoint].(map[string]interface{})["auth"].(map[string]interface{})["admin"].(map[string]interface{})["region_name"])
-					assert.Equal(t, fmt.Sprintf("admin-%s", config.RegionName), endpoints[endpoint].(map[string]interface{})["auth"].(map[string]interface{})["admin"].(map[string]interface{})["username"])
-					assert.Equal(t, config.KeystoneAdminPassword, endpoints[endpoint].(map[string]interface{})["auth"].(map[string]interface{})["admin"].(map[string]interface{})["password"])
+					auth := endpoints[endpoint].(map[string]interface{})["auth"].(map[string]interface{})
+
+					assert.Equal(t, config.RegionName, auth["admin"].(map[string]interface{})["region_name"])
+					assert.Equal(t, fmt.Sprintf("admin-%s", config.RegionName), auth["admin"].(map[string]interface{})["username"])
+					assert.Equal(t, config.KeystoneAdminPassword, auth["admin"].(map[string]interface{})["password"])
+
+					if tc.Name() == "magnum" {
+						assert.Equal(t, config.MagnumKeystonePassword, auth["magnum"].(map[string]interface{})["password"])
+					} else if tc.Name() != "keystone" {
+						t.Errorf("untested keystone configuration for %s", tc.Name())
+					}
+
 					assert.Equal(t, "keystone-api", endpoints[endpoint].(map[string]interface{})["hosts"].(map[string]interface{})["default"])
-					assert.Equal(t, "https", endpoints[endpoint].(map[string]interface{})["scheme"].(map[string]interface{})["public"])
-					assert.Equal(t, config.KeystoneHost, endpoints[endpoint].(map[string]interface{})["host_fqdn_override"].(map[string]interface{})["public"].(map[string]interface{})["host"])
 					assert.Equal(t, 5000, endpoints[endpoint].(map[string]interface{})["port"].(map[string]interface{})["api"].(map[string]interface{})["default"])
 					assert.Equal(t, 443, endpoints[endpoint].(map[string]interface{})["port"].(map[string]interface{})["api"].(map[string]interface{})["public"])
+
+					assertEndpointHostFQDNOverride(t, config.KeystoneHost, endpoints[endpoint])
 				default:
 					t.Errorf("unexpected endpoint: %s", endpoint)
 				}
