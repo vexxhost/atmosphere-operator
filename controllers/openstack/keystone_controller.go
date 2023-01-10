@@ -140,17 +140,6 @@ func (r *KeystoneReconciler) SetupWithManager(mgr ctrl.Manager) error {
 		return chartutil.CoalesceTables(values, overrides), nil
 	})
 
-	preHook := hook.PreHookFunc(func(u *unstructured.Unstructured, _ chartutil.Values, _ logr.Logger) error {
-		keystone := &openstackv1alpha1.Keystone{}
-		if err = runtime.DefaultUnstructuredConverter.FromUnstructured(u.Object, keystone); err != nil {
-			return err
-		}
-
-		// TODO: Wait for PXC to be ready?
-
-		return err
-	})
-
 	postHook := hook.PostHookFunc(func(u *unstructured.Unstructured, release release.Release, _ logr.Logger) error {
 		keystone := &openstackv1alpha1.Keystone{}
 		if err = runtime.DefaultUnstructuredConverter.FromUnstructured(u.Object, keystone); err != nil {
@@ -164,7 +153,7 @@ func (r *KeystoneReconciler) SetupWithManager(mgr ctrl.Manager) error {
 			},
 		}
 		_, err := ctrl.CreateOrUpdate(context.Background(), r.Client, ingress, func() error {
-			GenerateIngress(ingress, &keystone.Spec.Ingress, 5000)
+			GenerateIngress(ingress, &keystone.Spec.Ingress, endpoints.GetPortFromChart(chart, "identity", "api"))
 			return ctrl.SetControllerReference(keystone, ingress, r.Scheme)
 		})
 
@@ -174,7 +163,6 @@ func (r *KeystoneReconciler) SetupWithManager(mgr ctrl.Manager) error {
 	reconciler, err := reconciler.New(
 		reconciler.WithChart(*chart),
 		reconciler.WithClient(r.Client),
-		reconciler.WithPreHook(preHook),
 		reconciler.WithPostHook(postHook),
 		reconciler.WithValueTranslator(translator),
 		reconciler.SkipPrimaryGVKSchemeRegistration(true),
