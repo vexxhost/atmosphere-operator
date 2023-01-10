@@ -140,7 +140,13 @@ func main() {
 		setupLog.Error(err, "unable to create controller", "controller", "Placement")
 		os.Exit(1)
 	}
-	// TODO: ovs
+	if err = (&infracontrollers.OpenvswitchReconciler{
+		Client: mgr.GetClient(),
+		Scheme: mgr.GetScheme(),
+	}).SetupWithManager(mgr); err != nil {
+		setupLog.Error(err, "unable to create controller", "controller", "Openvswitch")
+		os.Exit(1)
+	}
 	// TODO: libvirt
 	// TODO: neutron
 	// TODO: nova

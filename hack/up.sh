@@ -28,3 +28,5 @@ ${KUBECTL} apply --server-side -f hack/testdata/pxc.yml
 ${KUBECTL} apply -f config/samples/infra_v1alpha1_memcached.yaml
 ${KUBECTL} apply -f config/samples/openstack_v1alpha1_keystone.yaml
 ${KUBECTL} apply -f config/samples/openstack_v1alpha1_barbican.yaml
+${KUBECTL} apply -f config/samples/openstack_v1alpha1_placement.yaml
+${KUBECTL} apply -f config/samples/infra_v1alpha1_openvswitch.yaml

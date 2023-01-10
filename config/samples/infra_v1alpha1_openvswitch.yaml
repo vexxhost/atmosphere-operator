@@ -1,0 +1,5 @@
+apiVersion: infra.atmosphere.vexxhost.com/v1alpha1
+kind: Openvswitch
+metadata:
+  name: openvswitch
+spec: {}

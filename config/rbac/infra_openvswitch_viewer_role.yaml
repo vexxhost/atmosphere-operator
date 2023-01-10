@@ -1,0 +1,27 @@
+# permissions for end users to view openvswitches.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  labels:
+    app.kubernetes.io/name: clusterrole
+    app.kubernetes.io/instance: openvswitch-viewer-role
+    app.kubernetes.io/component: rbac
+    app.kubernetes.io/created-by: atmosphere-operator
+    app.kubernetes.io/part-of: atmosphere-operator
+    app.kubernetes.io/managed-by: kustomize
+  name: openvswitch-viewer-role
+rules:
+- apiGroups:
+  - infra.atmosphere.vexxhost.com
+  resources:
+  - openvswitches
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - infra.atmosphere.vexxhost.com
+  resources:
+  - openvswitches/status
+  verbs:
+  - get

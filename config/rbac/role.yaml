@@ -114,6 +114,32 @@ rules:
 - apiGroups:
   - infra.atmosphere.vexxhost.com
   resources:
+  - openvswitches
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - infra.atmosphere.vexxhost.com
+  resources:
+  - openvswitches/finalizers
+  verbs:
+  - update
+- apiGroups:
+  - infra.atmosphere.vexxhost.com
+  resources:
+  - openvswitches/status
+  verbs:
+  - get
+  - patch
+  - update
+- apiGroups:
+  - infra.atmosphere.vexxhost.com
+  resources:
   - rabbitmqclusters
   verbs:
   - create
