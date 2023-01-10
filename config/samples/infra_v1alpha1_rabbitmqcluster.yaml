@@ -1,0 +1,12 @@
+apiVersion: infra.atmosphere.vexxhost.com/v1alpha1
+kind: RabbitmqCluster
+metadata:
+  labels:
+    app.kubernetes.io/name: rabbitmqcluster
+    app.kubernetes.io/instance: rabbitmqcluster-sample
+    app.kubernetes.io/part-of: atmosphere-operator
+    app.kubernetes.io/managed-by: kustomize
+    app.kubernetes.io/created-by: atmosphere-operator
+  name: rabbitmqcluster-sample
+spec:
+  # TODO(user): Add fields here

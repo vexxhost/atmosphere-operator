@@ -1,0 +1,38 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: keystone
+type: Opaque
+stringData:
+  admin: admin
+  rabbitmq: rabbitmq
+  database: database
+  memcached: memcached
+---
+apiVersion: infra.atmosphere.vexxhost.com/v1alpha1
+kind: RabbitmqCluster
+metadata:
+  name: keystone
+spec: {}
+---
+apiVersion: openstack.atmosphere.vexxhost.com/v1alpha1
+kind: Keystone
+metadata:
+  name: keystone
+spec:
+  regionName: RegionOne
+  ingress:
+    host: identity.cloud.vexxhost.com
+    className: nginx
+  replicas: 1
+  secretsRef:
+    name: keystone
+  databaseRef:
+    name: percona-xtradb
+  rabbitmqRef:
+    name: keystone
+  overrides:
+    conf:
+      keystone:
+        DEFAULT:
+          foo: bar

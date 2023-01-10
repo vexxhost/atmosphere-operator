@@ -31,12 +31,17 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/healthz"
 	"sigs.k8s.io/controller-runtime/pkg/log/zap"
 
-	infrav1alpha1 "github.com/vexxhost/atmosphere-operator/api/v1alpha1"
-	"github.com/vexxhost/atmosphere-operator/controllers"
+	infrav1alpha1 "github.com/vexxhost/atmosphere-operator/apis/infra/v1alpha1"
+	infracontrollers "github.com/vexxhost/atmosphere-operator/controllers/infra"
+
+	openstackv1alpha1 "github.com/vexxhost/atmosphere-operator/apis/openstack/v1alpha1"
+	openstackcontrollers "github.com/vexxhost/atmosphere-operator/controllers/openstack"
 
 	//+kubebuilder:scaffold:imports
 
+	pxcv1 "github.com/percona/percona-xtradb-cluster-operator/pkg/apis/pxc/v1"
 	monitoringv1 "github.com/prometheus-operator/prometheus-operator/pkg/apis/monitoring/v1"
+	rabbitmqv1beta1 "github.com/rabbitmq/cluster-operator/api/v1beta1"
 )
 
 var (
@@ -48,9 +53,12 @@ func init() {
 	utilruntime.Must(clientgoscheme.AddToScheme(scheme))
 
 	utilruntime.Must(infrav1alpha1.AddToScheme(scheme))
+	utilruntime.Must(openstackv1alpha1.AddToScheme(scheme))
 	//+kubebuilder:scaffold:scheme
 
 	utilruntime.Must(monitoringv1.AddToScheme(scheme))
+	utilruntime.Must(rabbitmqv1beta1.AddToScheme(scheme))
+	utilruntime.Must(pxcv1.SchemeBuilder.AddToScheme(scheme))
 }
 
 func main() {
@@ -94,11 +102,25 @@ func main() {
 		os.Exit(1)
 	}
 
-	if err = (&controllers.MemcachedReconciler{
+	if err = (&infracontrollers.MemcachedReconciler{
 		Client: mgr.GetClient(),
 		Scheme: mgr.GetScheme(),
 	}).SetupWithManager(mgr); err != nil {
 		setupLog.Error(err, "unable to create controller", "controller", "Memcached")
+		os.Exit(1)
+	}
+	if err = (&openstackcontrollers.KeystoneReconciler{
+		Client: mgr.GetClient(),
+		Scheme: mgr.GetScheme(),
+	}).SetupWithManager(mgr); err != nil {
+		setupLog.Error(err, "unable to create controller", "controller", "Keystone")
+		os.Exit(1)
+	}
+	if err = (&infracontrollers.RabbitmqClusterReconciler{
+		Client: mgr.GetClient(),
+		Scheme: mgr.GetScheme(),
+	}).SetupWithManager(mgr); err != nil {
+		setupLog.Error(err, "unable to create controller", "controller", "RabbitmqCluster")
 		os.Exit(1)
 	}
 	//+kubebuilder:scaffold:builder

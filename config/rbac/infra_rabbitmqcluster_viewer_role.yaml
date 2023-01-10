@@ -1,0 +1,27 @@
+# permissions for end users to view rabbitmqclusters.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  labels:
+    app.kubernetes.io/name: clusterrole
+    app.kubernetes.io/instance: rabbitmqcluster-viewer-role
+    app.kubernetes.io/component: rbac
+    app.kubernetes.io/created-by: atmosphere-operator
+    app.kubernetes.io/part-of: atmosphere-operator
+    app.kubernetes.io/managed-by: kustomize
+  name: rabbitmqcluster-viewer-role
+rules:
+- apiGroups:
+  - infra.atmosphere.vexxhost.com
+  resources:
+  - rabbitmqclusters
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - infra.atmosphere.vexxhost.com
+  resources:
+  - rabbitmqclusters/status
+  verbs:
+  - get

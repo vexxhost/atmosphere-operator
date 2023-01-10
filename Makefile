@@ -253,3 +253,23 @@ catalog-build: opm ## Build a catalog image.
 .PHONY: catalog-push
 catalog-push: ## Push a catalog image.
 	$(MAKE) docker-push IMG=$(CATALOG_IMG)
+
+# List of Helm charts
+CHARTS := $(shell find helm-charts/ -mindepth 1 -maxdepth 1 -type d -not -path "helm-charts/helm-toolkit")
+
+# Sync Helm charts
+.PHONY: sync-charts
+sync-charts:
+	cp -r ../openstack-helm-infra/helm-toolkit helm-charts/
+	cp -r ../openstack-helm-infra/memcached helm-charts/
+	cp -r ../openstack-helm/keystone helm-charts/
+	sed -i 's%file://../../openstack-helm-infra/helm-toolkit%file://../helm-toolkit%' helm-charts/*/requirements.yaml 
+
+# Build a Helm chart
+helm-charts/%.tgz: helm-charts/%
+	helm package --dependency-update --destination helm-charts/ helm-charts/$*
+	mv helm-charts/$*-*.tgz helm-charts/$*.tgz
+
+# Build all Helm charts
+.PHONY: charts
+charts: sync-charts $(patsubst %,%.tgz,$(CHARTS))

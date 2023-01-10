@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-package controllers
+package infra
 
 import (
 	"context"
@@ -37,7 +37,7 @@ import (
 	"helm.sh/helm/v3/pkg/chartutil"
 	"helm.sh/helm/v3/pkg/release"
 
-	"github.com/vexxhost/atmosphere-operator/api/v1alpha1"
+	"github.com/vexxhost/atmosphere-operator/apis/infra/v1alpha1"
 	"github.com/vexxhost/atmosphere-operator/pkg/images"
 	"github.com/vexxhost/atmosphere-operator/pkg/monitoring"
 )
@@ -58,8 +58,8 @@ type MemcachedReconciler struct {
 func (r *MemcachedReconciler) createOrUpdateService(memcached *v1alpha1.Memcached) (*corev1.Service, error) {
 	service := &corev1.Service{
 		ObjectMeta: ctrl.ObjectMeta{
-			Namespace: memcached.Namespace,
 			Name:      fmt.Sprintf("%s-metrics", memcached.Name),
+			Namespace: memcached.Namespace,
 		},
 	}
 
@@ -125,7 +125,7 @@ func (r *MemcachedReconciler) createOrUpdateServiceMonitor(memcached *v1alpha1.M
 				},
 			},
 			Selector: metav1.LabelSelector{
-				MatchLabels: service.GetLabels(),
+				MatchLabels: service.Labels,
 			},
 		}
 
@@ -153,7 +153,7 @@ func (r *MemcachedReconciler) createOrUpdatePrometheusRule(memcached *v1alpha1.M
 	}
 
 	_, err = ctrl.CreateOrUpdate(context.Background(), r.Client, prometheusRule, func() error {
-		prometheusRule.Labels = serviceMonitor.GetLabels()
+		prometheusRule.Labels = serviceMonitor.Labels
 		prometheusRule.Spec = monitoringv1.PrometheusRuleSpec{
 			Groups: groups,
 		}
@@ -170,7 +170,7 @@ func (r *MemcachedReconciler) createOrUpdatePrometheusRule(memcached *v1alpha1.M
 
 // SetupWithManager sets up the controller with the Manager.
 func (r *MemcachedReconciler) SetupWithManager(mgr ctrl.Manager) error {
-	chart, err := loader.Load("helm-charts/memcached")
+	chart, err := loader.Load("helm-charts/memcached.tgz")
 	if err != nil {
 		return err
 	}
@@ -225,8 +225,8 @@ func (r *MemcachedReconciler) SetupWithManager(mgr ctrl.Manager) error {
 	reconciler, err := reconciler.New(
 		reconciler.WithChart(*chart),
 		reconciler.WithClient(r.Client),
-		reconciler.WithPostHook(postHook),
 		reconciler.WithValueTranslator(translator),
+		reconciler.WithPostHook(postHook),
 		reconciler.SkipPrimaryGVKSchemeRegistration(true),
 		reconciler.WithGroupVersionKind(schema.GroupVersionKind{
 			Group:   v1alpha1.GroupVersion.Group,

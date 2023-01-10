@@ -41,6 +41,32 @@ rules:
   - patch
   - update
 - apiGroups:
+  - infra.atmosphere.vexxhost.com
+  resources:
+  - rabbitmqclusters
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - infra.atmosphere.vexxhost.com
+  resources:
+  - rabbitmqclusters/finalizers
+  verbs:
+  - update
+- apiGroups:
+  - infra.atmosphere.vexxhost.com
+  resources:
+  - rabbitmqclusters/status
+  verbs:
+  - get
+  - patch
+  - update
+- apiGroups:
   - monitoring.coreos.com
   resources:
   - prometheusrules
@@ -56,3 +82,40 @@ rules:
   - create
   - get
   - update
+- apiGroups:
+  - openstack.atmosphere.vexxhost.com
+  resources:
+  - keystones
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - openstack.atmosphere.vexxhost.com
+  resources:
+  - keystones/finalizers
+  verbs:
+  - update
+- apiGroups:
+  - openstack.atmosphere.vexxhost.com
+  resources:
+  - keystones/status
+  verbs:
+  - get
+  - patch
+  - update
+- apiGroups:
+  - rabbitmq.com
+  resources:
+  - rabbitmqclusters
+  verbs:
+  - create
+  - get
+  - list
+  - patch
+  - update
+  - watch

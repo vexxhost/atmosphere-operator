@@ -12,15 +12,18 @@ fi
 
 # Install the operators which we depend on
 # TODO(mnaser): Use OLM for this
+${KUBECTL} apply --server-side -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/main/deploy/static/provider/kind/deploy.yaml
 ${KUBECTL} apply --server-side -f https://github.com/prometheus-operator/prometheus-operator/raw/v0.62.0/bundle.yaml
 ${KUBECTL} apply --server-side -f https://raw.githubusercontent.com/percona/percona-xtradb-cluster-operator/v1.12.0/deploy/bundle.yaml
 ${KUBECTL} apply --server-side -f https://github.com/rabbitmq/cluster-operator/releases/download/v1.13.1/cluster-operator.yml
 
-# Install the CRDs
+# Install the CRDs + charts
+make charts
 make install
 
 # Install the basic dependencies that Atmosphere resources need
-${KUBECTL} apply --server-side -f https://raw.githubusercontent.com/percona/percona-xtradb-cluster-operator/v1.12.0/deploy/cr-minimal.yaml
+${KUBECTL} apply --server-side -f hack/testdata/pxc.yml
 
 # Install a set of basic resources for a deployment
 kubectl apply -f config/samples/infra_v1alpha1_memcached.yaml
+kubectl apply -f config/samples/openstack_v1alpha1_keystone.yaml
