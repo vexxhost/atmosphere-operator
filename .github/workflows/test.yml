@@ -32,4 +32,5 @@ jobs:
         with:
            go-version-file: go.mod
            cache: true
+      - run: make charts
       - run: go test -v ./...
