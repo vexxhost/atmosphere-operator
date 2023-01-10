@@ -29,7 +29,7 @@ BUNDLE_METADATA_OPTS ?= $(BUNDLE_CHANNELS) $(BUNDLE_DEFAULT_CHANNEL)
 #
 # For example, running 'make bundle-build bundle-push catalog-build catalog-push' will build and push both
 # atmosphere.vexxhost.com/atmosphere-operator-bundle:$VERSION and atmosphere.vexxhost.com/atmosphere-operator-catalog:$VERSION.
-IMAGE_TAG_BASE ?= atmosphere.vexxhost.com/atmosphere-operator
+IMAGE_TAG_BASE ?= quay.io/vexxhost/atmosphere
 
 # BUNDLE_IMG defines the image:tag used for the bundle.
 # You can use it as an arg. (E.g make bundle-build BUNDLE_IMG=<some-registry>/<project-name-bundle>:<tag>)
@@ -47,7 +47,7 @@ ifeq ($(USE_IMAGE_DIGESTS), true)
 endif
 
 # Image URL to use all building/pushing image targets
-IMG ?= controller:latest
+IMG ?= $(IMAGE_TAG_BASE):v$(VERSION)
 # ENVTEST_K8S_VERSION refers to the version of kubebuilder assets to be downloaded by envtest binary.
 ENVTEST_K8S_VERSION = 1.25.0
 
@@ -273,3 +273,7 @@ helm-charts/%.tgz: helm-charts/%
 # Build all Helm charts
 .PHONY: charts
 charts: $(patsubst %,%.tgz,$(CHARTS))
+
+# Build a deployment manifest
+deploy-manifest:
+	$(KUSTOMIZE) build config/default > bundle.yaml
