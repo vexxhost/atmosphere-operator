@@ -153,7 +153,13 @@ func main() {
 		setupLog.Error(err, "unable to create controller", "controller", "Openvswitch")
 		os.Exit(1)
 	}
-	// TODO: libvirt
+	if err = (&infracontrollers.LibvirtReconciler{
+		Client: mgr.GetClient(),
+		Scheme: mgr.GetScheme(),
+	}).SetupWithManager(mgr); err != nil {
+		setupLog.Error(err, "unable to create controller", "controller", "Libvirt")
+		os.Exit(1)
+	}
 	if err = (&openstackcontrollers.NeutronReconciler{
 		Client: mgr.GetClient(),
 		Scheme: mgr.GetScheme(),

@@ -100,6 +100,7 @@ var IMAGE_LIST = map[string]string{
 	"kube_scheduler":                               "k8s.gcr.io/kube-scheduler:v1.22.17",
 	"kube_state_metrics":                           "registry.k8s.io/kube-state-metrics/kube-state-metrics:v2.6.0",
 	"libvirt":                                      "quay.io/vexxhost/libvirtd:yoga-focal",
+	"libvirt_exporter":                             "docker.io/vexxhost/libvirtd-exporter:latest",
 	"magnum_api":                                   "quay.io/vexxhost/magnum@sha256:46e7c910780864f4532ecc85574f159a36794f37aac6be65e4b48c46040ced17",
 	"magnum_conductor":                             "quay.io/vexxhost/magnum@sha256:46e7c910780864f4532ecc85574f159a36794f37aac6be65e4b48c46040ced17",
 	"magnum_db_sync":                               "quay.io/vexxhost/magnum@sha256:46e7c910780864f4532ecc85574f159a36794f37aac6be65e4b48c46040ced17",

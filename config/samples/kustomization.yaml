@@ -13,4 +13,5 @@ resources:
 - openstack_v1alpha1_ironic.yaml
 - openstack_v1alpha1_horizon.yaml
 - openstack_v1alpha1_glance.yaml
+- infra_v1alpha1_libvirt.yaml
 #+kubebuilder:scaffold:manifestskustomizesamples

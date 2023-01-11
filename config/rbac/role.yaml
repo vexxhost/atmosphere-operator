@@ -88,6 +88,32 @@ rules:
 - apiGroups:
   - infra.atmosphere.vexxhost.com
   resources:
+  - libvirts
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - infra.atmosphere.vexxhost.com
+  resources:
+  - libvirts/finalizers
+  verbs:
+  - update
+- apiGroups:
+  - infra.atmosphere.vexxhost.com
+  resources:
+  - libvirts/status
+  verbs:
+  - get
+  - patch
+  - update
+- apiGroups:
+  - infra.atmosphere.vexxhost.com
+  resources:
   - memcacheds
   verbs:
   - create

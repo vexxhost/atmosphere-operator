@@ -15,6 +15,7 @@ resources:
 - bases/openstack.atmosphere.vexxhost.com_ironics.yaml
 - bases/openstack.atmosphere.vexxhost.com_horizons.yaml
 - bases/openstack.atmosphere.vexxhost.com_glances.yaml
+- bases/infra.atmosphere.vexxhost.com_libvirts.yaml
 #+kubebuilder:scaffold:crdkustomizeresource
 
 patchesStrategicMerge:
@@ -33,6 +34,7 @@ patchesStrategicMerge:
 #- patches/webhook_in_ironics.yaml
 #- patches/webhook_in_horizons.yaml
 #- patches/webhook_in_glances.yaml
+#- patches/webhook_in_libvirts.yaml
 #+kubebuilder:scaffold:crdkustomizewebhookpatch
 
 # [CERTMANAGER] To enable cert-manager, uncomment all the sections with [CERTMANAGER] prefix.
@@ -50,6 +52,7 @@ patchesStrategicMerge:
 #- patches/cainjection_in_ironics.yaml
 #- patches/cainjection_in_horizons.yaml
 #- patches/cainjection_in_glances.yaml
+#- patches/cainjection_in_libvirts.yaml
 #+kubebuilder:scaffold:crdkustomizecainjectionpatch
 
 # the following config is for teaching kustomize how to do kustomization for CRDs.

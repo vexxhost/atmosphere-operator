@@ -1,0 +1,9 @@
+apiVersion: infra.atmosphere.vexxhost.com/v1alpha1
+kind: Libvirt
+metadata:
+  name: libvirt
+spec:
+  overrides:
+    conf:
+      ceph:
+        enabled: false

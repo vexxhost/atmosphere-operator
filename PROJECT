@@ -76,6 +76,15 @@ resources:
     namespaced: true
   controller: true
   domain: atmosphere.vexxhost.com
+  group: infra
+  kind: Libvirt
+  path: github.com/vexxhost/atmosphere-operator/apis/infra/v1alpha1
+  version: v1alpha1
+- api:
+    crdVersion: v1
+    namespaced: true
+  controller: true
+  domain: atmosphere.vexxhost.com
   group: openstack
   kind: Neutron
   path: github.com/vexxhost/atmosphere-operator/apis/openstack/v1alpha1
