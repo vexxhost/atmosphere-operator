@@ -124,10 +124,8 @@ spec:
                 - name
                 type: object
               overrides:
-                additionalProperties:
-                  type: object
-                  x-kubernetes-preserve-unknown-fields: true
                 type: object
+                x-kubernetes-preserve-unknown-fields: true
               placementRef:
                 properties:
                   name:

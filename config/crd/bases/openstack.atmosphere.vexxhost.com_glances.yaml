@@ -44,6 +44,15 @@ spec:
                 required:
                 - name
                 type: object
+              horizonRef:
+                properties:
+                  name:
+                    type: string
+                  namespace:
+                    type: string
+                required:
+                - name
+                type: object
               imageRepository:
                 type: string
               ingress:
@@ -97,10 +106,8 @@ spec:
                 - name
                 type: object
               overrides:
-                additionalProperties:
-                  type: object
-                  x-kubernetes-preserve-unknown-fields: true
                 type: object
+                x-kubernetes-preserve-unknown-fields: true
               rabbitmqRef:
                 properties:
                   name:
@@ -127,6 +134,7 @@ spec:
                 type: object
             required:
             - databaseRef
+            - horizonRef
             - ingress
             - keystoneRef
             - rabbitmqRef

@@ -223,7 +223,7 @@ func (r *NovaReconciler) SetupWithManager(mgr ctrl.Manager) error {
 			return nil, err
 		}
 
-		return chartutil.CoalesceTables(values, overrides), nil
+		return chartutil.CoalesceTables(overrides, values), nil
 	})
 
 	postHook := hook.PostHookFunc(func(u *unstructured.Unstructured, release release.Release, _ logr.Logger) error {
@@ -254,8 +254,8 @@ func (r *NovaReconciler) SetupWithManager(mgr ctrl.Manager) error {
 			},
 		}
 		_, err = ctrl.CreateOrUpdate(context.Background(), r.Client, vncIngress, func() error {
-			GenerateIngress(ingress, &nova.Spec.Ingress, endpoints.GetPortFromChart(chart, "compute_novnc_proxy", "novnc_proxy"))
-			return ctrl.SetControllerReference(nova, ingress, r.Scheme)
+			GenerateIngress(vncIngress, &nova.Spec.VncIngress, endpoints.GetPortFromChart(chart, "compute_novnc_proxy", "novnc_proxy"))
+			return ctrl.SetControllerReference(nova, vncIngress, r.Scheme)
 		})
 
 		return err

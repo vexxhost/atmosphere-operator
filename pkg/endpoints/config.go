@@ -569,3 +569,14 @@ func WithHorizon(ctx context.Context, c client.Client, horizon *openstackv1alpha
 		return nil
 	}
 }
+
+func WithHorizonRef(ctx context.Context, c client.Client, ref *openstackv1alpha1.NamespacedName) func(*EndpointConfig) error {
+	return func(ec *EndpointConfig) error {
+		horizon := &openstackv1alpha1.Horizon{}
+		if err := c.Get(ctx, ref.NativeNamespacedName(), horizon); err != nil {
+			return err
+		}
+
+		return WithHorizon(ctx, c, horizon)(ec)
+	}
+}

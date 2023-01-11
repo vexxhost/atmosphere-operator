@@ -124,7 +124,7 @@ func (r *PlacementReconciler) SetupWithManager(mgr ctrl.Manager) error {
 			return nil, err
 		}
 
-		return chartutil.CoalesceTables(values, overrides), nil
+		return chartutil.CoalesceTables(overrides, values), nil
 	})
 
 	postHook := hook.PostHookFunc(func(u *unstructured.Unstructured, release release.Release, _ logr.Logger) error {

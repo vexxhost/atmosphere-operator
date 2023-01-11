@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 
 	networkingv1 "k8s.io/api/networking/v1"
-	runtime "k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/types"
 )
 
@@ -36,20 +35,22 @@ type IngressConfig struct {
 	TLS         networkingv1.IngressTLS `json:"tls,omitempty"`
 }
 
-type HelmOverrides map[string]runtime.RawExtension
+// +kubebuilder:validation:Schemaless
+// +kubebuilder:pruning:PreserveUnknownFields
+// +kubebuilder:validation:Type=object
+type HelmOverrides struct {
+	json.RawMessage `json:"-"`
+}
 
 func (h *HelmOverrides) GetAsMap() (map[string]interface{}, error) {
-	m := make(map[string]interface{})
+	val := make(map[string]interface{})
 
-	for k, v := range *h {
-		val := make(map[string]interface{})
-		err := json.Unmarshal(v.Raw, &val)
+	if h.RawMessage != nil {
+		err := json.Unmarshal(h.RawMessage, &val)
 		if err != nil {
 			return nil, err
 		}
-
-		m[k] = val
 	}
 
-	return m, nil
+	return val, nil
 }

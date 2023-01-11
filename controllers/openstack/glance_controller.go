@@ -18,13 +18,26 @@ package openstack
 
 import (
 	"context"
+	"strings"
 
+	"helm.sh/helm/v3/pkg/chart/loader"
+	"helm.sh/helm/v3/pkg/chartutil"
+	"helm.sh/helm/v3/pkg/release"
+	networkingv1 "k8s.io/api/networking/v1"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	"k8s.io/apimachinery/pkg/runtime"
+	"k8s.io/apimachinery/pkg/runtime/schema"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
-	"sigs.k8s.io/controller-runtime/pkg/log"
 
+	"github.com/go-logr/logr"
+	"github.com/operator-framework/helm-operator-plugins/pkg/hook"
+	"github.com/operator-framework/helm-operator-plugins/pkg/reconciler"
+	"github.com/operator-framework/helm-operator-plugins/pkg/values"
 	openstackv1alpha1 "github.com/vexxhost/atmosphere-operator/apis/openstack/v1alpha1"
+	"github.com/vexxhost/atmosphere-operator/pkg/endpoints"
+	"github.com/vexxhost/atmosphere-operator/pkg/images"
 )
 
 // GlanceReconciler reconciles a Glance object
@@ -33,30 +46,143 @@ type GlanceReconciler struct {
 	Scheme *runtime.Scheme
 }
 
+// TODO(mnaser): Tone down these RBAC rules
+//+kubebuilder:rbac:groups=apps;batch;core;extensions,resources=deployments;daemonsets;endpoints;replicasets;services;statefulsets,verbs=get;list;watch;create;update;patch;delete
+//+kubebuilder:rbac:groups=apps;batch;core;extensions,resources=cronjobs;jobs,verbs=get;list;watch;create;update;patch;delete
+//+kubebuilder:rbac:groups=apps;batch;core;extensions,resources=pods;services;endpoints;persistentvolumeclaims;events;configmaps;secrets;serviceaccounts;namespaces,verbs=get;list;watch;create;update;patch;delete
+//+kubebuilder:rbac:groups=networking.k8s.io,resources=ingresses;networkpolicies,verbs=get;list;watch;create;update;patch;delete
+//+kubebuilder:rbac:groups=policy,resources=poddisruptionbudgets,verbs=get;list;watch;create;update;patch;delete
+//+kubebuilder:rbac:groups=rbac.authorization.k8s.io,resources=roles;rolebindings,verbs=get;list;watch;create;update;patch;delete
+//+kubebuilder:rbac:groups=storage.k8s.io,resources=storageclasses,verbs=get;list;watch
+//+kubebuilder:rbac:groups=pxc.percona.com,resources=perconaxtradbclusters,verbs=get;list;watch
 //+kubebuilder:rbac:groups=openstack.atmosphere.vexxhost.com,resources=glances,verbs=get;list;watch;create;update;patch;delete
 //+kubebuilder:rbac:groups=openstack.atmosphere.vexxhost.com,resources=glances/status,verbs=get;update;patch
 //+kubebuilder:rbac:groups=openstack.atmosphere.vexxhost.com,resources=glances/finalizers,verbs=update
-
-// Reconcile is part of the main kubernetes reconciliation loop which aims to
-// move the current state of the cluster closer to the desired state.
-// TODO(user): Modify the Reconcile function to compare the state specified by
-// the Glance object against the actual cluster state, and then
-// perform operations to make the cluster state reflect the state specified by
-// the user.
-//
-// For more details, check Reconcile and its Result here:
-// - https://pkg.go.dev/sigs.k8s.io/controller-runtime@v0.13.0/pkg/reconcile
-func (r *GlanceReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
-	_ = log.FromContext(ctx)
-
-	// TODO(user): your logic here
-
-	return ctrl.Result{}, nil
-}
+//+kubebuilder:rbac:groups=infra.atmosphere.vexxhost.com,resources=rabbitmqclusters,verbs=get;list;watch;create;update;patch
 
 // SetupWithManager sets up the controller with the Manager.
 func (r *GlanceReconciler) SetupWithManager(mgr ctrl.Manager) error {
-	return ctrl.NewControllerManagedBy(mgr).
-		For(&openstackv1alpha1.Glance{}).
-		Complete(r)
+	chart, err := loader.Load("helm-charts/glance.tgz")
+	if err != nil {
+		return err
+	}
+
+	translator := values.TranslatorFunc(func(ctx context.Context, u *unstructured.Unstructured) (chartutil.Values, error) {
+		glance := &openstackv1alpha1.Glance{}
+		if err = runtime.DefaultUnstructuredConverter.FromUnstructured(u.Object, glance); err != nil {
+			return nil, err
+		}
+
+		tags, err := images.GetImageTagsForOpenstackHelmChart(chart, glance.Spec.ImageRepository)
+		if err != nil {
+			return nil, err
+		}
+
+		keystoneRef := glance.Spec.KeystoneRef.WithNamespace(glance.Namespace)
+		horizonRef := glance.Spec.HorizonRef.WithNamespace(glance.Namespace)
+
+		endpointConfig, err := endpoints.NewConfig(
+			endpoints.WithNamespace(glance.Namespace),
+			endpoints.WithKeystoneRef(ctx, r.Client, &keystoneRef),
+			endpoints.WithHorizonRef(ctx, r.Client, &horizonRef),
+			endpoints.WithGlance(ctx, r.Client, glance),
+		)
+		if err != nil {
+			return nil, err
+		}
+
+		endpoints, err := endpoints.ForChart(chart, endpointConfig)
+		if err != nil {
+			return nil, err
+		}
+
+		values := map[string]interface{}{
+			"storage": "rbd",
+			"bootstrap": map[string]interface{}{
+				"enabled": false,
+			},
+			"images": map[string]interface{}{
+				"tags": tags,
+			},
+			"endpoints": endpoints,
+			"conf": map[string]interface{}{
+				"glance": map[string]interface{}{
+					"DEFAULT": map[string]interface{}{
+						"log_config_append":       nil,
+						"show_image_direct_url":   true,
+						"show_multiple_locations": true,
+						"enable_import_methods":   "[]",
+						"workers":                 float32(8),
+					},
+					"cors": map[string]interface{}{
+						"allowed_origins": "*",
+					},
+					"image_formats": map[string]interface{}{
+						"disk_formats": strings.Join([]string{"qcow2", "raw"}, ","),
+					},
+					"oslo_messaging_notifications": map[string]interface{}{
+						"driver": "noop",
+					},
+				},
+			},
+			"pod": map[string]interface{}{
+				"replicas": map[string]interface{}{
+					"api": glance.Spec.Replicas,
+				},
+			},
+			"manifests": map[string]interface{}{
+				"ingress_api":         false,
+				"service_ingress_api": false,
+			},
+		}
+
+		overrides, err := glance.Spec.Overrides.GetAsMap()
+		if err != nil {
+			return nil, err
+		}
+
+		return chartutil.CoalesceTables(overrides, values), nil
+	})
+
+	postHook := hook.PostHookFunc(func(u *unstructured.Unstructured, release release.Release, _ logr.Logger) error {
+		glance := &openstackv1alpha1.Glance{}
+		if err = runtime.DefaultUnstructuredConverter.FromUnstructured(u.Object, glance); err != nil {
+			return err
+		}
+
+		ingress := &networkingv1.Ingress{
+			ObjectMeta: metav1.ObjectMeta{
+				Name:      "glance-api",
+				Namespace: u.GetNamespace(),
+			},
+		}
+		_, err := ctrl.CreateOrUpdate(context.Background(), r.Client, ingress, func() error {
+			GenerateIngress(ingress, &glance.Spec.Ingress, endpoints.GetPortFromChart(chart, "image", "api"))
+			return ctrl.SetControllerReference(glance, ingress, r.Scheme)
+		})
+
+		return err
+	})
+
+	reconciler, err := reconciler.New(
+		reconciler.WithChart(*chart),
+		reconciler.WithClient(r.Client),
+		reconciler.WithPostHook(postHook),
+		reconciler.WithValueTranslator(translator),
+		reconciler.SkipPrimaryGVKSchemeRegistration(true),
+		reconciler.WithGroupVersionKind(schema.GroupVersionKind{
+			Group:   openstackv1alpha1.GroupVersion.Group,
+			Version: openstackv1alpha1.GroupVersion.Version,
+			Kind:    "Glance",
+		}),
+	)
+	if err != nil {
+		return err
+	}
+
+	if err := reconciler.SetupWithManager(mgr); err != nil {
+		return err
+	}
+
+	return nil
 }

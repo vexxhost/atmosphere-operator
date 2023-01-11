@@ -10,6 +10,15 @@ if ! kind get clusters | grep -q "${CLUSTER_NAME}"; then
   kind create cluster --name ${CLUSTER_NAME} --config hack/kind-config.yml
 fi
 
+# Install Cilium
+helm repo add cilium https://helm.cilium.io/
+helm install cilium cilium/cilium --version 1.12.5 \
+   --namespace kube-system \
+   --set operator.replicas=1 \
+   --set image.pullPolicy=IfNotPresent \
+   --set ipam.mode=kubernetes \
+   --set cni.chainingMode=portmap
+
 # Install the operators which we depend on
 # TODO(mnaser): Use OLM for this
 ${KUBECTL} apply --server-side -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/main/deploy/static/provider/kind/deploy.yaml

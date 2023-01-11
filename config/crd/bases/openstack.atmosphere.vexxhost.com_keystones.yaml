@@ -88,10 +88,8 @@ spec:
                 - host
                 type: object
               overrides:
-                additionalProperties:
-                  type: object
-                  x-kubernetes-preserve-unknown-fields: true
                 type: object
+                x-kubernetes-preserve-unknown-fields: true
               rabbitmqRef:
                 properties:
                   name:

@@ -24,10 +24,12 @@ spec:
   replicas: 1
   regionName: RegionOne
   ingress:
-    host: baremetal.cloud.vexxhost.com
+    host: image.cloud.vexxhost.com
     className: nginx
   keystoneRef:
     name: keystone
+  horizonRef:
+    name: horizon
   secretsRef:
     name: glance
   databaseRef:
@@ -35,7 +37,7 @@ spec:
   rabbitmqRef:
     name: glance
   overrides:
-    conf:
-      glance:
-        DEFAULT:
-          foo: bar
+    storage: pvc
+    volume:
+      class_name: standard
+      size: 60Gi

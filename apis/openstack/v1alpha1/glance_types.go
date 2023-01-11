@@ -27,6 +27,7 @@ type GlanceSpec struct {
 	RegionName        string         `json:"regionName"`
 	Ingress           IngressConfig  `json:"ingress"`
 	KeystoneRef       NamespacedName `json:"keystoneRef"`
+	HorizonRef        NamespacedName `json:"horizonRef"`
 	SecretsRef        NamespacedName `json:"secretsRef"`
 	RabbitmqReference NamespacedName `json:"rabbitmqRef"`
 	DatabaseReference NamespacedName `json:"databaseRef"`
