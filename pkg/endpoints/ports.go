@@ -6,6 +6,11 @@ func GetPortFromChart(chart *chart.Chart, endpointName string, portName string) 
 	endpoint := chart.Values["endpoints"].(map[string]interface{})[endpointName].(map[string]interface{})
 	portConfig := endpoint["port"].(map[string]interface{})
 	portGroup := portConfig[portName].(map[string]interface{})
-	port := portGroup["service"].(float64)
+
+	port, ok := portGroup["service"].(float64)
+	if !ok {
+		port = portGroup["default"].(float64)
+	}
+
 	return int32(port)
 }

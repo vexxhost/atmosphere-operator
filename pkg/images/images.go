@@ -9,6 +9,7 @@ import (
 
 var SKIP_LIST = []string{
 	"image_repo_sync",
+	"purge_test",
 	"scripted_test",
 	"test",
 }

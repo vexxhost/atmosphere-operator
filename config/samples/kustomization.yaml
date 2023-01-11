@@ -6,4 +6,9 @@ resources:
 - openstack_v1alpha1_barbican.yaml
 - openstack_v1alpha1_placement.yaml
 - infra_v1alpha1_openvswitch.yaml
+- openstack_v1alpha1_neutron.yaml
+- openstack_v1alpha1_octavia.yaml
+- openstack_v1alpha1_designate.yaml
+- openstack_v1alpha1_nova.yaml
+- openstack_v1alpha1_ironic.yaml
 #+kubebuilder:scaffold:manifestskustomizesamples

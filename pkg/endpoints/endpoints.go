@@ -38,9 +38,9 @@ func endpointAuth(endpoint interface{}, passwords map[string]string) (map[string
 	return auth, nil
 }
 
-func basicEndpoint(host string) (map[string]interface{}, error) {
+func basicEndpoint(name, host string) (map[string]interface{}, error) {
 	if host == "" {
-		return nil, fmt.Errorf("host is required")
+		return nil, fmt.Errorf("host is required for %s", name)
 	}
 
 	return map[string]interface{}{
@@ -69,25 +69,25 @@ func ForChart(chart *chart.Chart, config *EndpointConfig) (map[string]interface{
 		case "ceph_mon", "ceph_object_store", "cloudwatch", "cluster_domain_suffix", "compute_spice_proxy", "fluentd", "ingress", "kube_dns", "ldap", "libvirt_exporter", "local_image_registry", "monitoring", "object_store", "oci_image_registry", "powerdns", "prometheus_rabbitmq_exporter":
 			continue
 		case "baremetal":
-			endpoint, err := basicEndpoint(config.IronicHost)
+			endpoint, err := basicEndpoint(endpointName, config.IronicHost)
 			if err != nil {
 				return nil, err
 			}
 			endpoints[endpointName] = endpoint
 		case "clustering":
-			endpoint, err := basicEndpoint(config.SenlinHost)
+			endpoint, err := basicEndpoint(endpointName, config.SenlinHost)
 			if err != nil {
 				return nil, err
 			}
 			endpoints[endpointName] = endpoint
 		case "cloudformation":
-			endpoint, err := basicEndpoint(config.HeatCloudFormationHost)
+			endpoint, err := basicEndpoint(endpointName, config.HeatCloudFormationHost)
 			if err != nil {
 				return nil, err
 			}
 			endpoints[endpointName] = endpoint
 		case "compute":
-			endpoint, err := basicEndpoint(config.NovaHost)
+			endpoint, err := basicEndpoint(endpointName, config.NovaHost)
 			if err != nil {
 				return nil, err
 			}
@@ -109,7 +109,7 @@ func ForChart(chart *chart.Chart, config *EndpointConfig) (map[string]interface{
 				},
 			}
 		case "compute_novnc_proxy":
-			endpoint, err := basicEndpoint(config.NovaNovncHost)
+			endpoint, err := basicEndpoint(endpointName, config.NovaNovncHost)
 			if err != nil {
 				return nil, err
 			}
@@ -118,19 +118,19 @@ func ForChart(chart *chart.Chart, config *EndpointConfig) (map[string]interface{
 			}
 			endpoints[endpointName] = endpoint
 		case "container_infra":
-			endpoint, err := basicEndpoint(config.MagnumHost)
+			endpoint, err := basicEndpoint(endpointName, config.MagnumHost)
 			if err != nil {
 				return nil, err
 			}
 			endpoints[endpointName] = endpoint
 		case "dashboard":
-			endpoint, err := basicEndpoint(config.HorizonHost)
+			endpoint, err := basicEndpoint(endpointName, config.HorizonHost)
 			if err != nil {
 				return nil, err
 			}
 			endpoints[endpointName] = endpoint
 		case "dns":
-			endpoint, err := basicEndpoint(config.DesignateHost)
+			endpoint, err := basicEndpoint(endpointName, config.DesignateHost)
 			if err != nil {
 				return nil, err
 			}
@@ -167,7 +167,7 @@ func ForChart(chart *chart.Chart, config *EndpointConfig) (map[string]interface{
 				auth[user].(map[string]interface{})["username"] = fmt.Sprintf("%s-%s", user, config.RegionName)
 			}
 
-			endpoint, err := basicEndpoint(config.KeystoneHost)
+			endpoint, err := basicEndpoint(endpointName, config.KeystoneHost)
 			if err != nil {
 				return nil, err
 			}
@@ -185,37 +185,37 @@ func ForChart(chart *chart.Chart, config *EndpointConfig) (map[string]interface{
 
 			endpoints[endpointName] = endpoint
 		case "image":
-			endpoint, err := basicEndpoint(config.GlanceHost)
+			endpoint, err := basicEndpoint(endpointName, config.GlanceHost)
 			if err != nil {
 				return nil, err
 			}
 			endpoints[endpointName] = endpoint
 		case "key_manager":
-			endpoint, err := basicEndpoint(config.BarbicanHost)
+			endpoint, err := basicEndpoint(endpointName, config.BarbicanHost)
 			if err != nil {
 				return nil, err
 			}
 			endpoints[endpointName] = endpoint
 		case "load_balancer":
-			endpoint, err := basicEndpoint(config.OctaviaHost)
+			endpoint, err := basicEndpoint(endpointName, config.OctaviaHost)
 			if err != nil {
 				return nil, err
 			}
 			endpoints[endpointName] = endpoint
 		case "mdns":
-			endpoint, err := basicEndpoint(config.DesignateHost)
+			endpoint, err := basicEndpoint(endpointName, config.DesignateHost)
 			if err != nil {
 				return nil, err
 			}
 			endpoints[endpointName] = endpoint
 		case "network":
-			endpoint, err := basicEndpoint(config.NeutronHost)
+			endpoint, err := basicEndpoint(endpointName, config.NeutronHost)
 			if err != nil {
 				return nil, err
 			}
 			endpoints[endpointName] = endpoint
 		case "orchestration":
-			endpoint, err := basicEndpoint(config.HeatHost)
+			endpoint, err := basicEndpoint(endpointName, config.HeatHost)
 			if err != nil {
 				return nil, err
 			}
@@ -308,13 +308,13 @@ func ForChart(chart *chart.Chart, config *EndpointConfig) (map[string]interface{
 				},
 			}
 		case "placement":
-			endpoint, err := basicEndpoint(config.PlacementHost)
+			endpoint, err := basicEndpoint(endpointName, config.PlacementHost)
 			if err != nil {
 				return nil, err
 			}
 			endpoints[endpointName] = endpoint
 		case "volumev3":
-			endpoint, err := basicEndpoint(config.CinderHost)
+			endpoint, err := basicEndpoint(endpointName, config.CinderHost)
 			if err != nil {
 				return nil, err
 			}

@@ -11,7 +11,7 @@ import (
 )
 
 func TestBasicEndpoint(t *testing.T) {
-	endpoint, err := basicEndpoint("cloud.atmosphere.vexxhost.com")
+	endpoint, err := basicEndpoint("test", "cloud.atmosphere.vexxhost.com")
 	require.NoError(t, err)
 
 	assert.Equal(t, map[string]interface{}{
@@ -32,7 +32,7 @@ func TestBasicEndpoint(t *testing.T) {
 }
 
 func TestTestBasicEndpointWithEmptyHost(t *testing.T) {
-	_, err := basicEndpoint("")
+	_, err := basicEndpoint("foo", "")
 	require.Error(t, err)
 }
 

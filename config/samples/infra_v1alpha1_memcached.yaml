@@ -1,3 +1,4 @@
+---
 apiVersion: infra.atmosphere.vexxhost.com/v1alpha1
 kind: Memcached
 metadata:

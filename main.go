@@ -148,12 +148,43 @@ func main() {
 		os.Exit(1)
 	}
 	// TODO: libvirt
-	// TODO: neutron
-	// TODO: nova
+	if err = (&openstackcontrollers.NeutronReconciler{
+		Client: mgr.GetClient(),
+		Scheme: mgr.GetScheme(),
+	}).SetupWithManager(mgr); err != nil {
+		setupLog.Error(err, "unable to create controller", "controller", "Neutron")
+		os.Exit(1)
+	}
+	if err = (&openstackcontrollers.IronicReconciler{
+		Client: mgr.GetClient(),
+		Scheme: mgr.GetScheme(),
+	}).SetupWithManager(mgr); err != nil {
+		setupLog.Error(err, "unable to create controller", "controller", "Ironic")
+		os.Exit(1)
+	}
+	if err = (&openstackcontrollers.NovaReconciler{
+		Client: mgr.GetClient(),
+		Scheme: mgr.GetScheme(),
+	}).SetupWithManager(mgr); err != nil {
+		setupLog.Error(err, "unable to create controller", "controller", "Nova")
+		os.Exit(1)
+	}
 	// TODO: senlin
-	// TODO: designate
+	if err = (&openstackcontrollers.DesignateReconciler{
+		Client: mgr.GetClient(),
+		Scheme: mgr.GetScheme(),
+	}).SetupWithManager(mgr); err != nil {
+		setupLog.Error(err, "unable to create controller", "controller", "Designate")
+		os.Exit(1)
+	}
 	// TODO: heat
-	// TODO: octavia
+	if err = (&openstackcontrollers.OctaviaReconciler{
+		Client: mgr.GetClient(),
+		Scheme: mgr.GetScheme(),
+	}).SetupWithManager(mgr); err != nil {
+		setupLog.Error(err, "unable to create controller", "controller", "Octavia")
+		os.Exit(1)
+	}
 	// TODO: magnum
 	// TODO: horizon
 	//+kubebuilder:scaffold:builder

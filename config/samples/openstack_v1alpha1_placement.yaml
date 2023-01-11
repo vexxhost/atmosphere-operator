@@ -1,3 +1,4 @@
+---
 apiVersion: v1
 kind: Secret
 metadata:
@@ -33,6 +34,6 @@ spec:
     name: percona-xtradb
   overrides:
     conf:
-      keystone:
+      placement:
         DEFAULT:
           foo: bar

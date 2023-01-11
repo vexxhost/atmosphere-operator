@@ -62,4 +62,49 @@ resources:
   kind: Openvswitch
   path: github.com/vexxhost/atmosphere-operator/apis/infra/v1alpha1
   version: v1alpha1
+- api:
+    crdVersion: v1
+    namespaced: true
+  controller: true
+  domain: atmosphere.vexxhost.com
+  group: openstack
+  kind: Neutron
+  path: github.com/vexxhost/atmosphere-operator/apis/openstack/v1alpha1
+  version: v1alpha1
+- api:
+    crdVersion: v1
+    namespaced: true
+  controller: true
+  domain: atmosphere.vexxhost.com
+  group: openstack
+  kind: Octavia
+  path: github.com/vexxhost/atmosphere-operator/apis/openstack/v1alpha1
+  version: v1alpha1
+- api:
+    crdVersion: v1
+    namespaced: true
+  controller: true
+  domain: atmosphere.vexxhost.com
+  group: openstack
+  kind: Designate
+  path: github.com/vexxhost/atmosphere-operator/apis/openstack/v1alpha1
+  version: v1alpha1
+- api:
+    crdVersion: v1
+    namespaced: true
+  controller: true
+  domain: atmosphere.vexxhost.com
+  group: openstack
+  kind: Nova
+  path: github.com/vexxhost/atmosphere-operator/apis/openstack/v1alpha1
+  version: v1alpha1
+- api:
+    crdVersion: v1
+    namespaced: true
+  controller: true
+  domain: atmosphere.vexxhost.com
+  group: openstack
+  kind: Ironic
+  path: github.com/vexxhost/atmosphere-operator/apis/openstack/v1alpha1
+  version: v1alpha1
 version: "3"

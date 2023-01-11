@@ -3,6 +3,7 @@ package endpoints
 import (
 	"context"
 	"errors"
+	"fmt"
 	"strings"
 
 	pxcv1 "github.com/percona/percona-xtradb-cluster-operator/pkg/apis/pxc/v1"
@@ -51,6 +52,8 @@ type EndpointConfig struct {
 	PlacementDatabasePassword string
 	PlacementKeystonePassword string
 
+	CoreDNSClusterIP string
+
 	NeutronHost             string
 	NeutronDatabasePassword string
 	NeutronRabbitmqPassword string
@@ -88,6 +91,7 @@ type EndpointConfig struct {
 	OctaviaDatabasePassword string
 	OctaviaRabbitmqPassword string
 	OctaviaKeystonePassword string
+	OctaviaHeartbeatKey     string
 
 	MagnumHost             string
 	MagnumDatabasePassword string
@@ -261,13 +265,224 @@ func WithPlacement(ctx context.Context, c client.Client, placement *openstackv1a
 	}
 }
 
-// TODO: ovs
 // TODO: libvirt
-// TODO: neutron
-// TODO: nova
+
+func WithNeutron(ctx context.Context, c client.Client, neutron *openstackv1alpha1.Neutron) func(*EndpointConfig) error {
+	return func(ec *EndpointConfig) error {
+		databaseRef := neutron.Spec.DatabaseReference.WithNamespace(neutron.Namespace)
+		if err := WithDatabase(ctx, c, &databaseRef)(ec); err != nil {
+			return err
+		}
+
+		rabbitmqRef := neutron.Spec.RabbitmqReference.WithNamespace(neutron.Namespace)
+		if err := WithRabbitmq(ctx, c, &rabbitmqRef)(ec); err != nil {
+			return err
+		}
+
+		ec.RegionName = neutron.Spec.RegionName
+		ec.NeutronHost = neutron.Spec.Ingress.Host
+
+		secret := &corev1.Secret{}
+		if err := c.Get(ctx, neutron.Spec.SecretsRef.WithNamespace(neutron.Namespace).NativeNamespacedName(), secret); err != nil {
+			return err
+		}
+
+		ec.MemcacheSecretKey = string(secret.Data["memcache"])
+		ec.NeutronDatabasePassword = string(secret.Data["database"])
+		ec.NeutronRabbitmqPassword = string(secret.Data["rabbitmq"])
+		ec.NeutronKeystonePassword = string(secret.Data["keystone"])
+
+		coreDnsService := &corev1.Service{}
+		if err := c.Get(ctx, neutron.Spec.CoreDNSRef.WithNamespace(neutron.Namespace).NativeNamespacedName(), coreDnsService); err != nil {
+			return err
+		}
+
+		ec.CoreDNSClusterIP = coreDnsService.Spec.ClusterIP
+
+		return nil
+	}
+}
+
+func WithNeutronRef(ctx context.Context, c client.Client, ref *openstackv1alpha1.NamespacedName) func(*EndpointConfig) error {
+	return func(ec *EndpointConfig) error {
+		neutron := &openstackv1alpha1.Neutron{}
+		if err := c.Get(ctx, ref.NativeNamespacedName(), neutron); err != nil {
+			return err
+		}
+
+		return WithNeutron(ctx, c, neutron)(ec)
+	}
+}
+
+func WithIronic(ctx context.Context, c client.Client, ironic *openstackv1alpha1.Ironic) func(*EndpointConfig) error {
+	return func(ec *EndpointConfig) error {
+		databaseRef := ironic.Spec.DatabaseReference.WithNamespace(ironic.Namespace)
+		if err := WithDatabase(ctx, c, &databaseRef)(ec); err != nil {
+			return err
+		}
+
+		rabbitmqRef := ironic.Spec.RabbitmqReference.WithNamespace(ironic.Namespace)
+		if err := WithRabbitmq(ctx, c, &rabbitmqRef)(ec); err != nil {
+			return err
+		}
+
+		ec.RegionName = ironic.Spec.RegionName
+		ec.IronicHost = ironic.Spec.Ingress.Host
+
+		secret := &corev1.Secret{}
+		if err := c.Get(ctx, ironic.Spec.SecretsRef.WithNamespace(ironic.Namespace).NativeNamespacedName(), secret); err != nil {
+			return err
+		}
+
+		ec.MemcacheSecretKey = string(secret.Data["memcache"])
+		// ec.IronicDatabasePassword = string(secret.Data["database"])
+		// ec.IronicRabbitmqPassword = string(secret.Data["rabbitmq"])
+		ec.IronicKeystonePassword = string(secret.Data["keystone"])
+
+		return nil
+	}
+}
+
+func WithIronicRef(ctx context.Context, c client.Client, ref *openstackv1alpha1.NamespacedName) func(*EndpointConfig) error {
+	return func(ec *EndpointConfig) error {
+		ironic := &openstackv1alpha1.Ironic{}
+		if err := c.Get(ctx, ref.NativeNamespacedName(), ironic); err != nil {
+			return err
+		}
+
+		return WithIronic(ctx, c, ironic)(ec)
+	}
+}
+
+func WithNova(ctx context.Context, c client.Client, nova *openstackv1alpha1.Nova) func(*EndpointConfig) error {
+	return func(ec *EndpointConfig) error {
+		databaseRef := nova.Spec.DatabaseReference.WithNamespace(nova.Namespace)
+		if err := WithDatabase(ctx, c, &databaseRef)(ec); err != nil {
+			return err
+		}
+
+		rabbitmqRef := nova.Spec.RabbitmqReference.WithNamespace(nova.Namespace)
+		if err := WithRabbitmq(ctx, c, &rabbitmqRef)(ec); err != nil {
+			return err
+		}
+
+		ec.RegionName = nova.Spec.RegionName
+		ec.NovaHost = nova.Spec.Ingress.Host
+
+		secret := &corev1.Secret{}
+		if err := c.Get(ctx, nova.Spec.SecretsRef.WithNamespace(nova.Namespace).NativeNamespacedName(), secret); err != nil {
+			return err
+		}
+
+		ec.MemcacheSecretKey = string(secret.Data["memcache"])
+		ec.NovaDatabasePassword = string(secret.Data["database"])
+		ec.NovaRabbitmqPassword = string(secret.Data["rabbitmq"])
+		ec.NovaKeystonePassword = string(secret.Data["keystone"])
+		ec.NovaMetadataSecret = string(secret.Data["metadata"])
+
+		return nil
+	}
+}
+
+func WithNovaRef(ctx context.Context, c client.Client, ref *openstackv1alpha1.NamespacedName) func(*EndpointConfig) error {
+	return func(ec *EndpointConfig) error {
+		nova := &openstackv1alpha1.Nova{}
+		if err := c.Get(ctx, ref.NativeNamespacedName(), nova); err != nil {
+			return err
+		}
+
+		return WithNova(ctx, c, nova)(ec)
+	}
+}
+
 // TODO: senlin
-// TODO: designate
+
+func WithDesignate(ctx context.Context, c client.Client, designate *openstackv1alpha1.Designate) func(*EndpointConfig) error {
+	return func(ec *EndpointConfig) error {
+		databaseRef := designate.Spec.DatabaseReference.WithNamespace(designate.Namespace)
+		if err := WithDatabase(ctx, c, &databaseRef)(ec); err != nil {
+			return err
+		}
+
+		rabbitmqRef := designate.Spec.RabbitmqReference.WithNamespace(designate.Namespace)
+		if err := WithRabbitmq(ctx, c, &rabbitmqRef)(ec); err != nil {
+			return err
+		}
+
+		ec.RegionName = designate.Spec.RegionName
+		ec.DesignateHost = designate.Spec.Ingress.Host
+
+		secret := &corev1.Secret{}
+		if err := c.Get(ctx, designate.Spec.SecretsRef.WithNamespace(designate.Namespace).NativeNamespacedName(), secret); err != nil {
+			return err
+		}
+
+		ec.MemcacheSecretKey = string(secret.Data["memcache"])
+		ec.DesignateDatabasePassword = string(secret.Data["database"])
+		ec.DesignateRabbitmqPassword = string(secret.Data["rabbitmq"])
+		ec.DesignateKeystonePassword = string(secret.Data["keystone"])
+
+		return nil
+	}
+}
+
+func WithDesignateRef(ctx context.Context, c client.Client, ref *openstackv1alpha1.NamespacedName) func(*EndpointConfig) error {
+	return func(ec *EndpointConfig) error {
+		designate := &openstackv1alpha1.Designate{}
+		if err := c.Get(ctx, ref.NativeNamespacedName(), designate); err != nil {
+			return err
+		}
+
+		return WithDesignate(ctx, c, designate)(ec)
+	}
+}
+
 // TODO: heat
-// TODO: octavia
+
+func WithOctavia(ctx context.Context, c client.Client, octavia *openstackv1alpha1.Octavia) func(*EndpointConfig) error {
+	return func(ec *EndpointConfig) error {
+		databaseRef := octavia.Spec.DatabaseReference.WithNamespace(octavia.Namespace)
+		if err := WithDatabase(ctx, c, &databaseRef)(ec); err != nil {
+			return err
+		}
+
+		rabbitmqRef := octavia.Spec.RabbitmqReference.WithNamespace(octavia.Namespace)
+		if err := WithRabbitmq(ctx, c, &rabbitmqRef)(ec); err != nil {
+			return err
+		}
+
+		ec.RegionName = octavia.Spec.RegionName
+		ec.OctaviaHost = octavia.Spec.Ingress.Host
+
+		secret := &corev1.Secret{}
+		if err := c.Get(ctx, octavia.Spec.SecretsRef.WithNamespace(octavia.Namespace).NativeNamespacedName(), secret); err != nil {
+			return err
+		}
+
+		ec.MemcacheSecretKey = string(secret.Data["memcache"])
+		ec.OctaviaDatabasePassword = string(secret.Data["database"])
+		ec.OctaviaRabbitmqPassword = string(secret.Data["rabbitmq"])
+		ec.OctaviaKeystonePassword = string(secret.Data["keystone"])
+
+		ec.OctaviaHeartbeatKey = string(secret.Data["heartbeat"])
+		if ec.OctaviaHeartbeatKey == "" {
+			return fmt.Errorf("octavia heartbeat key is empty")
+		}
+
+		return nil
+	}
+}
+
+func WithOctaviaRef(ctx context.Context, c client.Client, ref *openstackv1alpha1.NamespacedName) func(*EndpointConfig) error {
+	return func(ec *EndpointConfig) error {
+		octavia := &openstackv1alpha1.Octavia{}
+		if err := c.Get(ctx, ref.NativeNamespacedName(), octavia); err != nil {
+			return err
+		}
+
+		return WithOctavia(ctx, c, octavia)(ec)
+	}
+}
+
 // TODO: magnum
 // TODO: horizon

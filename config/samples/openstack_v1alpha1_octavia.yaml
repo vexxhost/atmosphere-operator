@@ -1,0 +1,69 @@
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: octavia
+type: Opaque
+stringData:
+  memcache: memcached
+  database: db123
+  rabbitmq: rabbit123
+  keystone: octavia123
+  heartbeat: beat
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: octavia-server-ca
+stringData:
+  ca.crt: ""
+  tls.key: ""
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: octavia-client-certs
+stringData:
+  tls-combined.pem: ""
+---
+apiVersion: infra.atmosphere.vexxhost.com/v1alpha1
+kind: RabbitmqCluster
+metadata:
+  name: octavia
+spec: {}
+---
+apiVersion: openstack.atmosphere.vexxhost.com/v1alpha1
+kind: Octavia
+metadata:
+  name: octavia
+spec:
+  replicas: 1
+  regionName: RegionOne
+  ingress:
+    host: load-balancer.cloud.vexxhost.com
+    className: nginx
+  keystoneRef:
+    name: keystone
+  neutronRef:
+    name: neutron
+  secretsRef:
+    name: octavia
+  databaseRef:
+    name: percona-xtradb
+  rabbitmqRef:
+    name: octavia
+  amphoraConfig:
+    network: lb-mgmt
+    flavor: m1.medium
+    imageOwner: admin
+    securityGroup: lb-sec-group
+    serverCaRef:
+      name: octavia-server-ca
+    clientCertRef:
+      name: octavia-client-certs
+  healthManagers: []
+  overrides:
+    conf:
+      octavia:
+        DEFAULT:
+          foo: bar

@@ -27,6 +27,12 @@ func TestGetPortFromChart(t *testing.T) {
 			port:     "api",
 			expected: 9311,
 		},
+		{
+			chart:    "octavia",
+			endpoint: "load_balancer",
+			port:     "api",
+			expected: 9876,
+		},
 	}
 
 	for _, tc := range testCases {

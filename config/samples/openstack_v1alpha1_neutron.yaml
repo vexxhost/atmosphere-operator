@@ -2,41 +2,53 @@
 apiVersion: v1
 kind: Secret
 metadata:
-  name: barbican
+  name: neutron
 type: Opaque
 stringData:
   memcache: memcached
   database: db123
   rabbitmq: rabbit123
-  keystone: barbican123
-  kek: dGhpcnR5X3R3b19ieXRlX2tleWJsYWhibGFoYmxhaGg=
+  keystone: neutron123
 ---
 apiVersion: infra.atmosphere.vexxhost.com/v1alpha1
 kind: RabbitmqCluster
 metadata:
-  name: barbican
+  name: neutron
 spec: {}
 ---
 apiVersion: openstack.atmosphere.vexxhost.com/v1alpha1
-kind: Barbican
+kind: Neutron
 metadata:
-  name: barbican
+  name: neutron
 spec:
   replicas: 1
   regionName: RegionOne
   ingress:
-    host: key-manager.cloud.vexxhost.com
+    host: network.cloud.vexxhost.com
     className: nginx
   keystoneRef:
     name: keystone
+  novaRef:
+    name: nova
+  octaviaRef:
+    name: octavia
+  designateRef:
+    name: designate
+  ironicRef:
+    name: ironic
+  coreDnsRef:
+    name: kube-dns
+    namespace: kube-system
   secretsRef:
-    name: barbican
+    name: neutron
   databaseRef:
     name: percona-xtradb
   rabbitmqRef:
-    name: barbican
+    name: neutron
   overrides:
     conf:
-      barbican:
+      auto_bridge_add:
+        br-ex: ""
+      neutron:
         DEFAULT:
           foo: bar

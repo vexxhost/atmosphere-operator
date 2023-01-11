@@ -221,6 +221,58 @@ rules:
 - apiGroups:
   - openstack.atmosphere.vexxhost.com
   resources:
+  - designates
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - openstack.atmosphere.vexxhost.com
+  resources:
+  - designates/finalizers
+  verbs:
+  - update
+- apiGroups:
+  - openstack.atmosphere.vexxhost.com
+  resources:
+  - designates/status
+  verbs:
+  - get
+  - patch
+  - update
+- apiGroups:
+  - openstack.atmosphere.vexxhost.com
+  resources:
+  - ironics
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - openstack.atmosphere.vexxhost.com
+  resources:
+  - ironics/finalizers
+  verbs:
+  - update
+- apiGroups:
+  - openstack.atmosphere.vexxhost.com
+  resources:
+  - ironics/status
+  verbs:
+  - get
+  - patch
+  - update
+- apiGroups:
+  - openstack.atmosphere.vexxhost.com
+  resources:
   - keystones
   verbs:
   - create
@@ -240,6 +292,84 @@ rules:
   - openstack.atmosphere.vexxhost.com
   resources:
   - keystones/status
+  verbs:
+  - get
+  - patch
+  - update
+- apiGroups:
+  - openstack.atmosphere.vexxhost.com
+  resources:
+  - neutrons
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - openstack.atmosphere.vexxhost.com
+  resources:
+  - neutrons/finalizers
+  verbs:
+  - update
+- apiGroups:
+  - openstack.atmosphere.vexxhost.com
+  resources:
+  - neutrons/status
+  verbs:
+  - get
+  - patch
+  - update
+- apiGroups:
+  - openstack.atmosphere.vexxhost.com
+  resources:
+  - nova
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - openstack.atmosphere.vexxhost.com
+  resources:
+  - nova/finalizers
+  verbs:
+  - update
+- apiGroups:
+  - openstack.atmosphere.vexxhost.com
+  resources:
+  - nova/status
+  verbs:
+  - get
+  - patch
+  - update
+- apiGroups:
+  - openstack.atmosphere.vexxhost.com
+  resources:
+  - octavias
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - openstack.atmosphere.vexxhost.com
+  resources:
+  - octavias/finalizers
+  verbs:
+  - update
+- apiGroups:
+  - openstack.atmosphere.vexxhost.com
+  resources:
+  - octavias/status
   verbs:
   - get
   - patch
