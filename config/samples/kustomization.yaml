@@ -11,4 +11,5 @@ resources:
 - openstack_v1alpha1_designate.yaml
 - openstack_v1alpha1_nova.yaml
 - openstack_v1alpha1_ironic.yaml
+- openstack_v1alpha1_horizon.yaml
 #+kubebuilder:scaffold:manifestskustomizesamples

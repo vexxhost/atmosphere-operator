@@ -247,6 +247,32 @@ rules:
 - apiGroups:
   - openstack.atmosphere.vexxhost.com
   resources:
+  - horizons
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - openstack.atmosphere.vexxhost.com
+  resources:
+  - horizons/finalizers
+  verbs:
+  - update
+- apiGroups:
+  - openstack.atmosphere.vexxhost.com
+  resources:
+  - horizons/status
+  verbs:
+  - get
+  - patch
+  - update
+- apiGroups:
+  - openstack.atmosphere.vexxhost.com
+  resources:
   - ironics
   verbs:
   - create

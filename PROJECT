@@ -77,16 +77,7 @@ resources:
   controller: true
   domain: atmosphere.vexxhost.com
   group: openstack
-  kind: Octavia
-  path: github.com/vexxhost/atmosphere-operator/apis/openstack/v1alpha1
-  version: v1alpha1
-- api:
-    crdVersion: v1
-    namespaced: true
-  controller: true
-  domain: atmosphere.vexxhost.com
-  group: openstack
-  kind: Designate
+  kind: Ironic
   path: github.com/vexxhost/atmosphere-operator/apis/openstack/v1alpha1
   version: v1alpha1
 - api:
@@ -104,7 +95,25 @@ resources:
   controller: true
   domain: atmosphere.vexxhost.com
   group: openstack
-  kind: Ironic
+  kind: Designate
+  path: github.com/vexxhost/atmosphere-operator/apis/openstack/v1alpha1
+  version: v1alpha1
+- api:
+    crdVersion: v1
+    namespaced: true
+  controller: true
+  domain: atmosphere.vexxhost.com
+  group: openstack
+  kind: Octavia
+  path: github.com/vexxhost/atmosphere-operator/apis/openstack/v1alpha1
+  version: v1alpha1
+- api:
+    crdVersion: v1
+    namespaced: true
+  controller: true
+  domain: atmosphere.vexxhost.com
+  group: openstack
+  kind: Horizon
   path: github.com/vexxhost/atmosphere-operator/apis/openstack/v1alpha1
   version: v1alpha1
 version: "3"

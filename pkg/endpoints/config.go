@@ -485,4 +485,23 @@ func WithOctaviaRef(ctx context.Context, c client.Client, ref *openstackv1alpha1
 }
 
 // TODO: magnum
-// TODO: horizon
+
+func WithHorizon(ctx context.Context, c client.Client, horizon *openstackv1alpha1.Horizon) func(*EndpointConfig) error {
+	return func(ec *EndpointConfig) error {
+		databaseRef := horizon.Spec.DatabaseReference.WithNamespace(horizon.Namespace)
+		if err := WithDatabase(ctx, c, &databaseRef)(ec); err != nil {
+			return err
+		}
+
+		ec.HorizonHost = horizon.Spec.Ingress.Host
+
+		secret := &corev1.Secret{}
+		if err := c.Get(ctx, horizon.Spec.SecretsRef.WithNamespace(horizon.Namespace).NativeNamespacedName(), secret); err != nil {
+			return err
+		}
+
+		ec.HorizonDatabasePassword = string(secret.Data["database"])
+
+		return nil
+	}
+}
