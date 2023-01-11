@@ -95,10 +95,8 @@ spec:
                 - name
                 type: object
               overrides:
-                additionalProperties:
-                  type: object
-                  x-kubernetes-preserve-unknown-fields: true
                 type: object
+                x-kubernetes-preserve-unknown-fields: true
               rabbitmqRef:
                 properties:
                   name:
@@ -134,6 +132,515 @@ spec:
             type: object
           status:
             description: BarbicanStatus defines the observed state of Barbican
+            type: object
+        type: object
+    served: true
+    storage: true
+    subresources:
+      status: {}
+---
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  annotations:
+    controller-gen.kubebuilder.io/version: v0.10.0
+  creationTimestamp: null
+  name: designates.openstack.atmosphere.vexxhost.com
+spec:
+  group: openstack.atmosphere.vexxhost.com
+  names:
+    kind: Designate
+    listKind: DesignateList
+    plural: designates
+    singular: designate
+  scope: Namespaced
+  versions:
+  - name: v1alpha1
+    schema:
+      openAPIV3Schema:
+        description: Designate is the Schema for the designates API
+        properties:
+          apiVersion:
+            description: 'APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources'
+            type: string
+          kind:
+            description: 'Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
+            type: string
+          metadata:
+            type: object
+          spec:
+            description: DesignateSpec defines the desired state of Designate
+            properties:
+              databaseRef:
+                properties:
+                  name:
+                    type: string
+                  namespace:
+                    type: string
+                required:
+                - name
+                type: object
+              imageRepository:
+                type: string
+              ingress:
+                properties:
+                  annotations:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  className:
+                    type: string
+                  host:
+                    type: string
+                  labels:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  tls:
+                    description: IngressTLS describes the transport layer security associated with an Ingress.
+                    properties:
+                      hosts:
+                        description: Hosts are a list of hosts included in the TLS certificate. The values in this list must match the name/s used in the tlsSecret. Defaults to the wildcard host setting for the loadbalancer controller fulfilling this Ingress, if left unspecified.
+                        items:
+                          type: string
+                        type: array
+                        x-kubernetes-list-type: atomic
+                      secretName:
+                        description: SecretName is the name of the secret used to terminate TLS traffic on port 443. Field is left optional to allow TLS routing based on SNI hostname alone. If the SNI host in a listener conflicts with the "Host" header field used by an IngressRule, the SNI host is used for termination and value of the Host header is used for routing.
+                        type: string
+                    type: object
+                required:
+                - className
+                - host
+                type: object
+              keystoneRef:
+                properties:
+                  name:
+                    type: string
+                  namespace:
+                    type: string
+                required:
+                - name
+                type: object
+              overrides:
+                type: object
+                x-kubernetes-preserve-unknown-fields: true
+              rabbitmqRef:
+                properties:
+                  name:
+                    type: string
+                  namespace:
+                    type: string
+                required:
+                - name
+                type: object
+              regionName:
+                type: string
+              replicas:
+                default: 1
+                format: int32
+                type: integer
+              secretsRef:
+                properties:
+                  name:
+                    type: string
+                  namespace:
+                    type: string
+                required:
+                - name
+                type: object
+            required:
+            - databaseRef
+            - ingress
+            - keystoneRef
+            - rabbitmqRef
+            - regionName
+            - replicas
+            - secretsRef
+            type: object
+          status:
+            description: DesignateStatus defines the observed state of Designate
+            type: object
+        type: object
+    served: true
+    storage: true
+    subresources:
+      status: {}
+---
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  annotations:
+    controller-gen.kubebuilder.io/version: v0.10.0
+  creationTimestamp: null
+  name: glances.openstack.atmosphere.vexxhost.com
+spec:
+  group: openstack.atmosphere.vexxhost.com
+  names:
+    kind: Glance
+    listKind: GlanceList
+    plural: glances
+    singular: glance
+  scope: Namespaced
+  versions:
+  - name: v1alpha1
+    schema:
+      openAPIV3Schema:
+        description: Glance is the Schema for the glances API
+        properties:
+          apiVersion:
+            description: 'APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources'
+            type: string
+          kind:
+            description: 'Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
+            type: string
+          metadata:
+            type: object
+          spec:
+            description: GlanceSpec defines the desired state of Glance
+            properties:
+              databaseRef:
+                properties:
+                  name:
+                    type: string
+                  namespace:
+                    type: string
+                required:
+                - name
+                type: object
+              horizonRef:
+                properties:
+                  name:
+                    type: string
+                  namespace:
+                    type: string
+                required:
+                - name
+                type: object
+              imageRepository:
+                type: string
+              ingress:
+                properties:
+                  annotations:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  className:
+                    type: string
+                  host:
+                    type: string
+                  labels:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  tls:
+                    description: IngressTLS describes the transport layer security associated with an Ingress.
+                    properties:
+                      hosts:
+                        description: Hosts are a list of hosts included in the TLS certificate. The values in this list must match the name/s used in the tlsSecret. Defaults to the wildcard host setting for the loadbalancer controller fulfilling this Ingress, if left unspecified.
+                        items:
+                          type: string
+                        type: array
+                        x-kubernetes-list-type: atomic
+                      secretName:
+                        description: SecretName is the name of the secret used to terminate TLS traffic on port 443. Field is left optional to allow TLS routing based on SNI hostname alone. If the SNI host in a listener conflicts with the "Host" header field used by an IngressRule, the SNI host is used for termination and value of the Host header is used for routing.
+                        type: string
+                    type: object
+                required:
+                - className
+                - host
+                type: object
+              keystoneRef:
+                properties:
+                  name:
+                    type: string
+                  namespace:
+                    type: string
+                required:
+                - name
+                type: object
+              overrides:
+                type: object
+                x-kubernetes-preserve-unknown-fields: true
+              rabbitmqRef:
+                properties:
+                  name:
+                    type: string
+                  namespace:
+                    type: string
+                required:
+                - name
+                type: object
+              regionName:
+                type: string
+              replicas:
+                default: 1
+                format: int32
+                type: integer
+              secretsRef:
+                properties:
+                  name:
+                    type: string
+                  namespace:
+                    type: string
+                required:
+                - name
+                type: object
+            required:
+            - databaseRef
+            - horizonRef
+            - ingress
+            - keystoneRef
+            - rabbitmqRef
+            - regionName
+            - replicas
+            - secretsRef
+            type: object
+          status:
+            description: GlanceStatus defines the observed state of Glance
+            type: object
+        type: object
+    served: true
+    storage: true
+    subresources:
+      status: {}
+---
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  annotations:
+    controller-gen.kubebuilder.io/version: v0.10.0
+  creationTimestamp: null
+  name: horizons.openstack.atmosphere.vexxhost.com
+spec:
+  group: openstack.atmosphere.vexxhost.com
+  names:
+    kind: Horizon
+    listKind: HorizonList
+    plural: horizons
+    singular: horizon
+  scope: Namespaced
+  versions:
+  - name: v1alpha1
+    schema:
+      openAPIV3Schema:
+        description: Horizon is the Schema for the horizons API
+        properties:
+          apiVersion:
+            description: 'APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources'
+            type: string
+          kind:
+            description: 'Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
+            type: string
+          metadata:
+            type: object
+          spec:
+            description: HorizonSpec defines the desired state of Horizon
+            properties:
+              databaseRef:
+                properties:
+                  name:
+                    type: string
+                  namespace:
+                    type: string
+                required:
+                - name
+                type: object
+              imageRepository:
+                type: string
+              ingress:
+                properties:
+                  annotations:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  className:
+                    type: string
+                  host:
+                    type: string
+                  labels:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  tls:
+                    description: IngressTLS describes the transport layer security associated with an Ingress.
+                    properties:
+                      hosts:
+                        description: Hosts are a list of hosts included in the TLS certificate. The values in this list must match the name/s used in the tlsSecret. Defaults to the wildcard host setting for the loadbalancer controller fulfilling this Ingress, if left unspecified.
+                        items:
+                          type: string
+                        type: array
+                        x-kubernetes-list-type: atomic
+                      secretName:
+                        description: SecretName is the name of the secret used to terminate TLS traffic on port 443. Field is left optional to allow TLS routing based on SNI hostname alone. If the SNI host in a listener conflicts with the "Host" header field used by an IngressRule, the SNI host is used for termination and value of the Host header is used for routing.
+                        type: string
+                    type: object
+                required:
+                - className
+                - host
+                type: object
+              keystoneRef:
+                properties:
+                  name:
+                    type: string
+                  namespace:
+                    type: string
+                required:
+                - name
+                type: object
+              overrides:
+                type: object
+                x-kubernetes-preserve-unknown-fields: true
+              replicas:
+                default: 1
+                format: int32
+                type: integer
+              secretsRef:
+                properties:
+                  name:
+                    type: string
+                  namespace:
+                    type: string
+                required:
+                - name
+                type: object
+            required:
+            - databaseRef
+            - ingress
+            - keystoneRef
+            - replicas
+            - secretsRef
+            type: object
+          status:
+            description: HorizonStatus defines the observed state of Horizon
+            type: object
+        type: object
+    served: true
+    storage: true
+    subresources:
+      status: {}
+---
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  annotations:
+    controller-gen.kubebuilder.io/version: v0.10.0
+  creationTimestamp: null
+  name: ironics.openstack.atmosphere.vexxhost.com
+spec:
+  group: openstack.atmosphere.vexxhost.com
+  names:
+    kind: Ironic
+    listKind: IronicList
+    plural: ironics
+    singular: ironic
+  scope: Namespaced
+  versions:
+  - name: v1alpha1
+    schema:
+      openAPIV3Schema:
+        description: Ironic is the Schema for the ironics API
+        properties:
+          apiVersion:
+            description: 'APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources'
+            type: string
+          kind:
+            description: 'Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
+            type: string
+          metadata:
+            type: object
+          spec:
+            description: IronicSpec defines the desired state of Ironic
+            properties:
+              databaseRef:
+                properties:
+                  name:
+                    type: string
+                  namespace:
+                    type: string
+                required:
+                - name
+                type: object
+              imageRepository:
+                type: string
+              ingress:
+                properties:
+                  annotations:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  className:
+                    type: string
+                  host:
+                    type: string
+                  labels:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  tls:
+                    description: IngressTLS describes the transport layer security associated with an Ingress.
+                    properties:
+                      hosts:
+                        description: Hosts are a list of hosts included in the TLS certificate. The values in this list must match the name/s used in the tlsSecret. Defaults to the wildcard host setting for the loadbalancer controller fulfilling this Ingress, if left unspecified.
+                        items:
+                          type: string
+                        type: array
+                        x-kubernetes-list-type: atomic
+                      secretName:
+                        description: SecretName is the name of the secret used to terminate TLS traffic on port 443. Field is left optional to allow TLS routing based on SNI hostname alone. If the SNI host in a listener conflicts with the "Host" header field used by an IngressRule, the SNI host is used for termination and value of the Host header is used for routing.
+                        type: string
+                    type: object
+                required:
+                - className
+                - host
+                type: object
+              keystoneRef:
+                properties:
+                  name:
+                    type: string
+                  namespace:
+                    type: string
+                required:
+                - name
+                type: object
+              overrides:
+                type: object
+                x-kubernetes-preserve-unknown-fields: true
+              rabbitmqRef:
+                properties:
+                  name:
+                    type: string
+                  namespace:
+                    type: string
+                required:
+                - name
+                type: object
+              regionName:
+                type: string
+              replicas:
+                default: 1
+                format: int32
+                type: integer
+              secretsRef:
+                properties:
+                  name:
+                    type: string
+                  namespace:
+                    type: string
+                required:
+                - name
+                type: object
+            required:
+            - databaseRef
+            - ingress
+            - keystoneRef
+            - rabbitmqRef
+            - regionName
+            - replicas
+            - secretsRef
+            type: object
+          status:
+            description: IronicStatus defines the observed state of Ironic
             type: object
         type: object
     served: true
@@ -216,10 +723,8 @@ spec:
                 - host
                 type: object
               overrides:
-                additionalProperties:
-                  type: object
-                  x-kubernetes-preserve-unknown-fields: true
                 type: object
+                x-kubernetes-preserve-unknown-fields: true
               rabbitmqRef:
                 properties:
                   name:
@@ -254,6 +759,53 @@ spec:
             type: object
           status:
             description: KeystoneStatus defines the observed state of Keystone
+            type: object
+        type: object
+    served: true
+    storage: true
+    subresources:
+      status: {}
+---
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  annotations:
+    controller-gen.kubebuilder.io/version: v0.10.0
+  creationTimestamp: null
+  name: libvirts.infra.atmosphere.vexxhost.com
+spec:
+  group: infra.atmosphere.vexxhost.com
+  names:
+    kind: Libvirt
+    listKind: LibvirtList
+    plural: libvirts
+    singular: libvirt
+  scope: Namespaced
+  versions:
+  - name: v1alpha1
+    schema:
+      openAPIV3Schema:
+        description: Libvirt is the Schema for the libvirts API
+        properties:
+          apiVersion:
+            description: 'APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources'
+            type: string
+          kind:
+            description: 'Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
+            type: string
+          metadata:
+            type: object
+          spec:
+            description: LibvirtSpec defines the desired state of Libvirt
+            properties:
+              imageRepository:
+                type: string
+              overrides:
+                type: object
+                x-kubernetes-preserve-unknown-fields: true
+            type: object
+          status:
+            description: LibvirtStatus defines the observed state of Libvirt
             type: object
         type: object
     served: true
@@ -311,6 +863,566 @@ metadata:
   annotations:
     controller-gen.kubebuilder.io/version: v0.10.0
   creationTimestamp: null
+  name: neutrons.openstack.atmosphere.vexxhost.com
+spec:
+  group: openstack.atmosphere.vexxhost.com
+  names:
+    kind: Neutron
+    listKind: NeutronList
+    plural: neutrons
+    singular: neutron
+  scope: Namespaced
+  versions:
+  - name: v1alpha1
+    schema:
+      openAPIV3Schema:
+        description: Neutron is the Schema for the neutrons API
+        properties:
+          apiVersion:
+            description: 'APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources'
+            type: string
+          kind:
+            description: 'Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
+            type: string
+          metadata:
+            type: object
+          spec:
+            description: NeutronSpec defines the desired state of Neutron
+            properties:
+              coreDnsRef:
+                properties:
+                  name:
+                    type: string
+                  namespace:
+                    type: string
+                required:
+                - name
+                type: object
+              databaseRef:
+                properties:
+                  name:
+                    type: string
+                  namespace:
+                    type: string
+                required:
+                - name
+                type: object
+              designateRef:
+                properties:
+                  name:
+                    type: string
+                  namespace:
+                    type: string
+                required:
+                - name
+                type: object
+              imageRepository:
+                type: string
+              ingress:
+                properties:
+                  annotations:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  className:
+                    type: string
+                  host:
+                    type: string
+                  labels:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  tls:
+                    description: IngressTLS describes the transport layer security associated with an Ingress.
+                    properties:
+                      hosts:
+                        description: Hosts are a list of hosts included in the TLS certificate. The values in this list must match the name/s used in the tlsSecret. Defaults to the wildcard host setting for the loadbalancer controller fulfilling this Ingress, if left unspecified.
+                        items:
+                          type: string
+                        type: array
+                        x-kubernetes-list-type: atomic
+                      secretName:
+                        description: SecretName is the name of the secret used to terminate TLS traffic on port 443. Field is left optional to allow TLS routing based on SNI hostname alone. If the SNI host in a listener conflicts with the "Host" header field used by an IngressRule, the SNI host is used for termination and value of the Host header is used for routing.
+                        type: string
+                    type: object
+                required:
+                - className
+                - host
+                type: object
+              ironicRef:
+                properties:
+                  name:
+                    type: string
+                  namespace:
+                    type: string
+                required:
+                - name
+                type: object
+              keystoneRef:
+                properties:
+                  name:
+                    type: string
+                  namespace:
+                    type: string
+                required:
+                - name
+                type: object
+              novaRef:
+                properties:
+                  name:
+                    type: string
+                  namespace:
+                    type: string
+                required:
+                - name
+                type: object
+              octaviaRef:
+                properties:
+                  name:
+                    type: string
+                  namespace:
+                    type: string
+                required:
+                - name
+                type: object
+              overrides:
+                type: object
+                x-kubernetes-preserve-unknown-fields: true
+              rabbitmqRef:
+                properties:
+                  name:
+                    type: string
+                  namespace:
+                    type: string
+                required:
+                - name
+                type: object
+              regionName:
+                type: string
+              replicas:
+                default: 1
+                format: int32
+                type: integer
+              secretsRef:
+                properties:
+                  name:
+                    type: string
+                  namespace:
+                    type: string
+                required:
+                - name
+                type: object
+            required:
+            - coreDnsRef
+            - databaseRef
+            - designateRef
+            - ingress
+            - ironicRef
+            - keystoneRef
+            - novaRef
+            - octaviaRef
+            - rabbitmqRef
+            - regionName
+            - replicas
+            - secretsRef
+            type: object
+          status:
+            description: NeutronStatus defines the observed state of Neutron
+            type: object
+        type: object
+    served: true
+    storage: true
+    subresources:
+      status: {}
+---
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  annotations:
+    controller-gen.kubebuilder.io/version: v0.10.0
+  creationTimestamp: null
+  name: nova.openstack.atmosphere.vexxhost.com
+spec:
+  group: openstack.atmosphere.vexxhost.com
+  names:
+    kind: Nova
+    listKind: NovaList
+    plural: nova
+    singular: nova
+  scope: Namespaced
+  versions:
+  - name: v1alpha1
+    schema:
+      openAPIV3Schema:
+        description: Nova is the Schema for the nova API
+        properties:
+          apiVersion:
+            description: 'APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources'
+            type: string
+          kind:
+            description: 'Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
+            type: string
+          metadata:
+            type: object
+          spec:
+            description: NovaSpec defines the desired state of Nova
+            properties:
+              databaseRef:
+                properties:
+                  name:
+                    type: string
+                  namespace:
+                    type: string
+                required:
+                - name
+                type: object
+              glanceRef:
+                properties:
+                  name:
+                    type: string
+                  namespace:
+                    type: string
+                required:
+                - name
+                type: object
+              imageRepository:
+                type: string
+              ingress:
+                properties:
+                  annotations:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  className:
+                    type: string
+                  host:
+                    type: string
+                  labels:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  tls:
+                    description: IngressTLS describes the transport layer security associated with an Ingress.
+                    properties:
+                      hosts:
+                        description: Hosts are a list of hosts included in the TLS certificate. The values in this list must match the name/s used in the tlsSecret. Defaults to the wildcard host setting for the loadbalancer controller fulfilling this Ingress, if left unspecified.
+                        items:
+                          type: string
+                        type: array
+                        x-kubernetes-list-type: atomic
+                      secretName:
+                        description: SecretName is the name of the secret used to terminate TLS traffic on port 443. Field is left optional to allow TLS routing based on SNI hostname alone. If the SNI host in a listener conflicts with the "Host" header field used by an IngressRule, the SNI host is used for termination and value of the Host header is used for routing.
+                        type: string
+                    type: object
+                required:
+                - className
+                - host
+                type: object
+              ironicRef:
+                properties:
+                  name:
+                    type: string
+                  namespace:
+                    type: string
+                required:
+                - name
+                type: object
+              keystoneRef:
+                properties:
+                  name:
+                    type: string
+                  namespace:
+                    type: string
+                required:
+                - name
+                type: object
+              neutronRef:
+                properties:
+                  name:
+                    type: string
+                  namespace:
+                    type: string
+                required:
+                - name
+                type: object
+              overrides:
+                type: object
+                x-kubernetes-preserve-unknown-fields: true
+              placementRef:
+                properties:
+                  name:
+                    type: string
+                  namespace:
+                    type: string
+                required:
+                - name
+                type: object
+              rabbitmqRef:
+                properties:
+                  name:
+                    type: string
+                  namespace:
+                    type: string
+                required:
+                - name
+                type: object
+              regionName:
+                type: string
+              replicas:
+                default: 1
+                format: int32
+                type: integer
+              secretsRef:
+                properties:
+                  name:
+                    type: string
+                  namespace:
+                    type: string
+                required:
+                - name
+                type: object
+              vncIngress:
+                properties:
+                  annotations:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  className:
+                    type: string
+                  host:
+                    type: string
+                  labels:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  tls:
+                    description: IngressTLS describes the transport layer security associated with an Ingress.
+                    properties:
+                      hosts:
+                        description: Hosts are a list of hosts included in the TLS certificate. The values in this list must match the name/s used in the tlsSecret. Defaults to the wildcard host setting for the loadbalancer controller fulfilling this Ingress, if left unspecified.
+                        items:
+                          type: string
+                        type: array
+                        x-kubernetes-list-type: atomic
+                      secretName:
+                        description: SecretName is the name of the secret used to terminate TLS traffic on port 443. Field is left optional to allow TLS routing based on SNI hostname alone. If the SNI host in a listener conflicts with the "Host" header field used by an IngressRule, the SNI host is used for termination and value of the Host header is used for routing.
+                        type: string
+                    type: object
+                required:
+                - className
+                - host
+                type: object
+            required:
+            - databaseRef
+            - glanceRef
+            - ingress
+            - ironicRef
+            - keystoneRef
+            - neutronRef
+            - placementRef
+            - rabbitmqRef
+            - regionName
+            - replicas
+            - secretsRef
+            - vncIngress
+            type: object
+          status:
+            description: NovaStatus defines the observed state of Nova
+            type: object
+        type: object
+    served: true
+    storage: true
+    subresources:
+      status: {}
+---
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  annotations:
+    controller-gen.kubebuilder.io/version: v0.10.0
+  creationTimestamp: null
+  name: octavia.openstack.atmosphere.vexxhost.com
+spec:
+  group: openstack.atmosphere.vexxhost.com
+  names:
+    kind: Octavia
+    listKind: OctaviaList
+    plural: octavia
+    singular: octavia
+  scope: Namespaced
+  versions:
+  - name: v1alpha1
+    schema:
+      openAPIV3Schema:
+        description: Octavia is the Schema for the octavia API
+        properties:
+          apiVersion:
+            description: 'APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources'
+            type: string
+          kind:
+            description: 'Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
+            type: string
+          metadata:
+            type: object
+          spec:
+            description: OctaviaSpec defines the desired state of Octavia
+            properties:
+              amphoraConfig:
+                properties:
+                  clientCertRef:
+                    properties:
+                      name:
+                        type: string
+                      namespace:
+                        type: string
+                    required:
+                    - name
+                    type: object
+                  flavor:
+                    type: string
+                  imageOwner:
+                    type: string
+                  network:
+                    type: string
+                  securityGroup:
+                    type: string
+                  serverCaRef:
+                    properties:
+                      name:
+                        type: string
+                      namespace:
+                        type: string
+                    required:
+                    - name
+                    type: object
+                  sshKeyName:
+                    type: string
+                required:
+                - clientCertRef
+                - flavor
+                - imageOwner
+                - network
+                - securityGroup
+                - serverCaRef
+                type: object
+              databaseRef:
+                properties:
+                  name:
+                    type: string
+                  namespace:
+                    type: string
+                required:
+                - name
+                type: object
+              healthManagers:
+                items:
+                  type: string
+                type: array
+              imageRepository:
+                type: string
+              ingress:
+                properties:
+                  annotations:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  className:
+                    type: string
+                  host:
+                    type: string
+                  labels:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  tls:
+                    description: IngressTLS describes the transport layer security associated with an Ingress.
+                    properties:
+                      hosts:
+                        description: Hosts are a list of hosts included in the TLS certificate. The values in this list must match the name/s used in the tlsSecret. Defaults to the wildcard host setting for the loadbalancer controller fulfilling this Ingress, if left unspecified.
+                        items:
+                          type: string
+                        type: array
+                        x-kubernetes-list-type: atomic
+                      secretName:
+                        description: SecretName is the name of the secret used to terminate TLS traffic on port 443. Field is left optional to allow TLS routing based on SNI hostname alone. If the SNI host in a listener conflicts with the "Host" header field used by an IngressRule, the SNI host is used for termination and value of the Host header is used for routing.
+                        type: string
+                    type: object
+                required:
+                - className
+                - host
+                type: object
+              keystoneRef:
+                properties:
+                  name:
+                    type: string
+                  namespace:
+                    type: string
+                required:
+                - name
+                type: object
+              neutronRef:
+                properties:
+                  name:
+                    type: string
+                  namespace:
+                    type: string
+                required:
+                - name
+                type: object
+              overrides:
+                type: object
+                x-kubernetes-preserve-unknown-fields: true
+              rabbitmqRef:
+                properties:
+                  name:
+                    type: string
+                  namespace:
+                    type: string
+                required:
+                - name
+                type: object
+              regionName:
+                type: string
+              replicas:
+                default: 1
+                format: int32
+                type: integer
+              secretsRef:
+                properties:
+                  name:
+                    type: string
+                  namespace:
+                    type: string
+                required:
+                - name
+                type: object
+            required:
+            - amphoraConfig
+            - databaseRef
+            - healthManagers
+            - ingress
+            - keystoneRef
+            - neutronRef
+            - rabbitmqRef
+            - regionName
+            - replicas
+            - secretsRef
+            type: object
+          status:
+            description: OctaviaStatus defines the observed state of Octavia
+            type: object
+        type: object
+    served: true
+    storage: true
+    subresources:
+      status: {}
+---
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  annotations:
+    controller-gen.kubebuilder.io/version: v0.10.0
+  creationTimestamp: null
   name: openvswitches.infra.atmosphere.vexxhost.com
 spec:
   group: infra.atmosphere.vexxhost.com
@@ -340,10 +1452,8 @@ spec:
               imageRepository:
                 type: string
               overrides:
-                additionalProperties:
-                  type: object
-                  x-kubernetes-preserve-unknown-fields: true
                 type: object
+                x-kubernetes-preserve-unknown-fields: true
             type: object
           status:
             description: OpenvswitchStatus defines the observed state of Openvswitch
@@ -438,10 +1548,8 @@ spec:
                 - name
                 type: object
               overrides:
-                additionalProperties:
-                  type: object
-                  x-kubernetes-preserve-unknown-fields: true
                 type: object
+                x-kubernetes-preserve-unknown-fields: true
               regionName:
                 type: string
               replicas:
@@ -702,6 +1810,32 @@ rules:
 - apiGroups:
   - infra.atmosphere.vexxhost.com
   resources:
+  - libvirts
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - infra.atmosphere.vexxhost.com
+  resources:
+  - libvirts/finalizers
+  verbs:
+  - update
+- apiGroups:
+  - infra.atmosphere.vexxhost.com
+  resources:
+  - libvirts/status
+  verbs:
+  - get
+  - patch
+  - update
+- apiGroups:
+  - infra.atmosphere.vexxhost.com
+  resources:
   - memcacheds
   verbs:
   - create
@@ -835,6 +1969,110 @@ rules:
 - apiGroups:
   - openstack.atmosphere.vexxhost.com
   resources:
+  - designates
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - openstack.atmosphere.vexxhost.com
+  resources:
+  - designates/finalizers
+  verbs:
+  - update
+- apiGroups:
+  - openstack.atmosphere.vexxhost.com
+  resources:
+  - designates/status
+  verbs:
+  - get
+  - patch
+  - update
+- apiGroups:
+  - openstack.atmosphere.vexxhost.com
+  resources:
+  - glances
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - openstack.atmosphere.vexxhost.com
+  resources:
+  - glances/finalizers
+  verbs:
+  - update
+- apiGroups:
+  - openstack.atmosphere.vexxhost.com
+  resources:
+  - glances/status
+  verbs:
+  - get
+  - patch
+  - update
+- apiGroups:
+  - openstack.atmosphere.vexxhost.com
+  resources:
+  - horizons
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - openstack.atmosphere.vexxhost.com
+  resources:
+  - horizons/finalizers
+  verbs:
+  - update
+- apiGroups:
+  - openstack.atmosphere.vexxhost.com
+  resources:
+  - horizons/status
+  verbs:
+  - get
+  - patch
+  - update
+- apiGroups:
+  - openstack.atmosphere.vexxhost.com
+  resources:
+  - ironics
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - openstack.atmosphere.vexxhost.com
+  resources:
+  - ironics/finalizers
+  verbs:
+  - update
+- apiGroups:
+  - openstack.atmosphere.vexxhost.com
+  resources:
+  - ironics/status
+  verbs:
+  - get
+  - patch
+  - update
+- apiGroups:
+  - openstack.atmosphere.vexxhost.com
+  resources:
   - keystones
   verbs:
   - create
@@ -854,6 +2092,84 @@ rules:
   - openstack.atmosphere.vexxhost.com
   resources:
   - keystones/status
+  verbs:
+  - get
+  - patch
+  - update
+- apiGroups:
+  - openstack.atmosphere.vexxhost.com
+  resources:
+  - neutrons
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - openstack.atmosphere.vexxhost.com
+  resources:
+  - neutrons/finalizers
+  verbs:
+  - update
+- apiGroups:
+  - openstack.atmosphere.vexxhost.com
+  resources:
+  - neutrons/status
+  verbs:
+  - get
+  - patch
+  - update
+- apiGroups:
+  - openstack.atmosphere.vexxhost.com
+  resources:
+  - novas
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - openstack.atmosphere.vexxhost.com
+  resources:
+  - novas/finalizers
+  verbs:
+  - update
+- apiGroups:
+  - openstack.atmosphere.vexxhost.com
+  resources:
+  - novas/status
+  verbs:
+  - get
+  - patch
+  - update
+- apiGroups:
+  - openstack.atmosphere.vexxhost.com
+  resources:
+  - octavias
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - openstack.atmosphere.vexxhost.com
+  resources:
+  - octavias/finalizers
+  verbs:
+  - update
+- apiGroups:
+  - openstack.atmosphere.vexxhost.com
+  resources:
+  - octavias/status
   verbs:
   - get
   - patch
