@@ -5,20 +5,20 @@ metadata:
   annotations:
     controller-gen.kubebuilder.io/version: v0.10.0
   creationTimestamp: null
-  name: nova.openstack.atmosphere.vexxhost.com
+  name: glances.openstack.atmosphere.vexxhost.com
 spec:
   group: openstack.atmosphere.vexxhost.com
   names:
-    kind: Nova
-    listKind: NovaList
-    plural: nova
-    singular: nova
+    kind: Glance
+    listKind: GlanceList
+    plural: glances
+    singular: glance
   scope: Namespaced
   versions:
   - name: v1alpha1
     schema:
       openAPIV3Schema:
-        description: Nova is the Schema for the nova API
+        description: Glance is the Schema for the glances API
         properties:
           apiVersion:
             description: 'APIVersion defines the versioned schema of this representation
@@ -33,18 +33,9 @@ spec:
           metadata:
             type: object
           spec:
-            description: NovaSpec defines the desired state of Nova
+            description: GlanceSpec defines the desired state of Glance
             properties:
               databaseRef:
-                properties:
-                  name:
-                    type: string
-                  namespace:
-                    type: string
-                required:
-                - name
-                type: object
-              glanceRef:
                 properties:
                   name:
                     type: string
@@ -96,25 +87,7 @@ spec:
                 - className
                 - host
                 type: object
-              ironicRef:
-                properties:
-                  name:
-                    type: string
-                  namespace:
-                    type: string
-                required:
-                - name
-                type: object
               keystoneRef:
-                properties:
-                  name:
-                    type: string
-                  namespace:
-                    type: string
-                required:
-                - name
-                type: object
-              neutronRef:
                 properties:
                   name:
                     type: string
@@ -127,15 +100,6 @@ spec:
                 additionalProperties:
                   type: object
                   x-kubernetes-preserve-unknown-fields: true
-                type: object
-              placementRef:
-                properties:
-                  name:
-                    type: string
-                  namespace:
-                    type: string
-                required:
-                - name
                 type: object
               rabbitmqRef:
                 properties:
@@ -161,63 +125,17 @@ spec:
                 required:
                 - name
                 type: object
-              vncIngress:
-                properties:
-                  annotations:
-                    additionalProperties:
-                      type: string
-                    type: object
-                  className:
-                    type: string
-                  host:
-                    type: string
-                  labels:
-                    additionalProperties:
-                      type: string
-                    type: object
-                  tls:
-                    description: IngressTLS describes the transport layer security
-                      associated with an Ingress.
-                    properties:
-                      hosts:
-                        description: Hosts are a list of hosts included in the TLS
-                          certificate. The values in this list must match the name/s
-                          used in the tlsSecret. Defaults to the wildcard host setting
-                          for the loadbalancer controller fulfilling this Ingress,
-                          if left unspecified.
-                        items:
-                          type: string
-                        type: array
-                        x-kubernetes-list-type: atomic
-                      secretName:
-                        description: SecretName is the name of the secret used to
-                          terminate TLS traffic on port 443. Field is left optional
-                          to allow TLS routing based on SNI hostname alone. If the
-                          SNI host in a listener conflicts with the "Host" header
-                          field used by an IngressRule, the SNI host is used for termination
-                          and value of the Host header is used for routing.
-                        type: string
-                    type: object
-                required:
-                - className
-                - host
-                type: object
             required:
             - databaseRef
-            - glanceRef
             - ingress
-            - ironicRef
             - keystoneRef
-            - neutronRef
-            - placementRef
             - rabbitmqRef
             - regionName
             - replicas
             - secretsRef
-            - vncIngress
             type: object
           status:
-            description: NovaStatus defines the observed state of Nova
+            description: GlanceStatus defines the observed state of Glance
             type: object
         type: object
     served: true

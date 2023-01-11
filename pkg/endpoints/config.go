@@ -9,6 +9,7 @@ import (
 	pxcv1 "github.com/percona/percona-xtradb-cluster-operator/pkg/apis/pxc/v1"
 	infrav1alpha1 "github.com/vexxhost/atmosphere-operator/apis/infra/v1alpha1"
 	openstackv1alpha1 "github.com/vexxhost/atmosphere-operator/apis/openstack/v1alpha1"
+	"golang.org/x/crypto/ssh"
 	corev1 "k8s.io/api/core/v1"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 )
@@ -68,6 +69,8 @@ type EndpointConfig struct {
 	NovaRabbitmqPassword string
 	NovaKeystonePassword string
 	NovaMetadataSecret   string
+	NovaSSHPrivateKey    string
+	NovaSSHPublicKey     string
 
 	SenlinHost             string
 	SenlinDatabasePassword string
@@ -239,7 +242,47 @@ func WithBarbican(ctx context.Context, c client.Client, barbican *openstackv1alp
 }
 
 // TODO: ceph
-// TODO: glance
+
+func WithGlance(ctx context.Context, c client.Client, glance *openstackv1alpha1.Glance) func(*EndpointConfig) error {
+	return func(ec *EndpointConfig) error {
+		databaseRef := glance.Spec.DatabaseReference.WithNamespace(glance.Namespace)
+		if err := WithDatabase(ctx, c, &databaseRef)(ec); err != nil {
+			return err
+		}
+
+		rabbitmqRef := glance.Spec.RabbitmqReference.WithNamespace(glance.Namespace)
+		if err := WithRabbitmq(ctx, c, &rabbitmqRef)(ec); err != nil {
+			return err
+		}
+
+		ec.RegionName = glance.Spec.RegionName
+		ec.GlanceHost = glance.Spec.Ingress.Host
+
+		secret := &corev1.Secret{}
+		if err := c.Get(ctx, glance.Spec.SecretsRef.WithNamespace(glance.Namespace).NativeNamespacedName(), secret); err != nil {
+			return err
+		}
+
+		ec.MemcacheSecretKey = string(secret.Data["memcache"])
+		ec.GlanceDatabasePassword = string(secret.Data["database"])
+		ec.GlanceRabbitmqPassword = string(secret.Data["rabbitmq"])
+		ec.GlanceKeystonePassword = string(secret.Data["keystone"])
+
+		return nil
+	}
+}
+
+func WithGlanceRef(ctx context.Context, c client.Client, ref *openstackv1alpha1.NamespacedName) func(*EndpointConfig) error {
+	return func(ec *EndpointConfig) error {
+		glance := &openstackv1alpha1.Glance{}
+		if err := c.Get(ctx, ref.NativeNamespacedName(), glance); err != nil {
+			return err
+		}
+
+		return WithGlance(ctx, c, glance)(ec)
+	}
+}
+
 // TODO: cinder
 
 func WithPlacement(ctx context.Context, c client.Client, placement *openstackv1alpha1.Placement) func(*EndpointConfig) error {
@@ -262,6 +305,17 @@ func WithPlacement(ctx context.Context, c client.Client, placement *openstackv1a
 		ec.PlacementKeystonePassword = string(secret.Data["keystone"])
 
 		return nil
+	}
+}
+
+func WithPlacementRef(ctx context.Context, c client.Client, ref *openstackv1alpha1.NamespacedName) func(*EndpointConfig) error {
+	return func(ec *EndpointConfig) error {
+		placement := &openstackv1alpha1.Placement{}
+		if err := c.Get(ctx, ref.NativeNamespacedName(), placement); err != nil {
+			return err
+		}
+
+		return WithPlacement(ctx, c, placement)(ec)
 	}
 }
 
@@ -368,6 +422,7 @@ func WithNova(ctx context.Context, c client.Client, nova *openstackv1alpha1.Nova
 
 		ec.RegionName = nova.Spec.RegionName
 		ec.NovaHost = nova.Spec.Ingress.Host
+		ec.NovaNovncHost = nova.Spec.VncIngress.Host
 
 		secret := &corev1.Secret{}
 		if err := c.Get(ctx, nova.Spec.SecretsRef.WithNamespace(nova.Namespace).NativeNamespacedName(), secret); err != nil {
@@ -379,6 +434,15 @@ func WithNova(ctx context.Context, c client.Client, nova *openstackv1alpha1.Nova
 		ec.NovaRabbitmqPassword = string(secret.Data["rabbitmq"])
 		ec.NovaKeystonePassword = string(secret.Data["keystone"])
 		ec.NovaMetadataSecret = string(secret.Data["metadata"])
+
+		ec.NovaSSHPrivateKey = string(secret.Data["ssh"])
+		parsed, err := ssh.ParsePrivateKey(secret.Data["ssh"])
+		if err != nil {
+			return err
+		}
+
+		publicKey := ssh.MarshalAuthorizedKey(parsed.PublicKey())
+		ec.NovaSSHPublicKey = string(publicKey)
 
 		return nil
 	}

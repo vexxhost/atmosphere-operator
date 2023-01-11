@@ -247,6 +247,32 @@ rules:
 - apiGroups:
   - openstack.atmosphere.vexxhost.com
   resources:
+  - glances
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - openstack.atmosphere.vexxhost.com
+  resources:
+  - glances/finalizers
+  verbs:
+  - update
+- apiGroups:
+  - openstack.atmosphere.vexxhost.com
+  resources:
+  - glances/status
+  verbs:
+  - get
+  - patch
+  - update
+- apiGroups:
+  - openstack.atmosphere.vexxhost.com
+  resources:
   - horizons
   verbs:
   - create
@@ -351,7 +377,7 @@ rules:
 - apiGroups:
   - openstack.atmosphere.vexxhost.com
   resources:
-  - nova
+  - novas
   verbs:
   - create
   - delete
@@ -363,13 +389,13 @@ rules:
 - apiGroups:
   - openstack.atmosphere.vexxhost.com
   resources:
-  - nova/finalizers
+  - novas/finalizers
   verbs:
   - update
 - apiGroups:
   - openstack.atmosphere.vexxhost.com
   resources:
-  - nova/status
+  - novas/status
   verbs:
   - get
   - patch

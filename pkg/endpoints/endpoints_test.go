@@ -183,8 +183,8 @@ func TestForChart(t *testing.T) {
 					}
 
 					assert.Equal(t, "keystone-api", endpoints[endpoint].(map[string]interface{})["hosts"].(map[string]interface{})["default"])
-					assert.Equal(t, 5000, endpoints[endpoint].(map[string]interface{})["port"].(map[string]interface{})["api"].(map[string]interface{})["default"])
-					assert.Equal(t, 443, endpoints[endpoint].(map[string]interface{})["port"].(map[string]interface{})["api"].(map[string]interface{})["public"])
+					assert.Equal(t, float32(5000), endpoints[endpoint].(map[string]interface{})["port"].(map[string]interface{})["api"].(map[string]interface{})["default"])
+					assert.Equal(t, float32(443), endpoints[endpoint].(map[string]interface{})["port"].(map[string]interface{})["api"].(map[string]interface{})["public"])
 
 					assertEndpointHostFQDNOverride(t, config.KeystoneHost, endpoints[endpoint])
 				case "image":

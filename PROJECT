@@ -50,6 +50,15 @@ resources:
   controller: true
   domain: atmosphere.vexxhost.com
   group: openstack
+  kind: Glance
+  path: github.com/vexxhost/atmosphere-operator/apis/openstack/v1alpha1
+  version: v1alpha1
+- api:
+    crdVersion: v1
+    namespaced: true
+  controller: true
+  domain: atmosphere.vexxhost.com
+  group: openstack
   kind: Placement
   path: github.com/vexxhost/atmosphere-operator/apis/openstack/v1alpha1
   version: v1alpha1

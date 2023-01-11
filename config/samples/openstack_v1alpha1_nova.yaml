@@ -10,6 +10,46 @@ stringData:
   rabbitmq: rabbit123
   keystone: nova123
   metadata: metadata123
+  ssh: |
+    -----BEGIN RSA PRIVATE KEY-----
+    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
+    -----END RSA PRIVATE KEY-----
 ---
 apiVersion: infra.atmosphere.vexxhost.com/v1alpha1
 kind: RabbitmqCluster
@@ -27,8 +67,19 @@ spec:
   ingress:
     host: compute.cloud.vexxhost.com
     className: nginx
+  vncIngress:
+    host: vnc.cloud.vexxhost.com
+    className: nginx
   keystoneRef:
     name: keystone
+  placementRef:
+    name: placement
+  glanceRef:
+    name: glance
+  neutronRef:
+    name: neutron
+  ironicRef:
+    name: ironic
   secretsRef:
     name: nova
   databaseRef:
@@ -37,6 +88,5 @@ spec:
     name: nova
   overrides:
     conf:
-      nova:
-        DEFAULT:
-          foo: bar
+      ceph:
+        enabled: false

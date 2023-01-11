@@ -178,8 +178,8 @@ func ForChart(chart *chart.Chart, config *EndpointConfig) (map[string]interface{
 			}
 			endpoint["port"] = map[string]interface{}{
 				"api": map[string]interface{}{
-					"default": 5000,
-					"public":  443,
+					"default": float32(5000),
+					"public":  float32(443),
 				},
 			}
 

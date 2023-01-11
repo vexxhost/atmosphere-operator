@@ -4,8 +4,9 @@ nodes:
   - role: control-plane
     labels:
       ingress-ready: "true"
-      openstack-control-plane: enabled
       openvswitch: enabled
+      openstack-control-plane: enabled
+      openstack-compute-node: enabled
     extraPortMappings:
     - containerPort: 80
       hostPort: 80

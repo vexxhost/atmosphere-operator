@@ -20,18 +20,13 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
-// NovaSpec defines the desired state of Nova
-type NovaSpec struct {
+// GlanceSpec defines the desired state of Glance
+type GlanceSpec struct {
 	// +kubebuilder:default=1
 	Replicas          int32          `json:"replicas"`
 	RegionName        string         `json:"regionName"`
 	Ingress           IngressConfig  `json:"ingress"`
-	VncIngress        IngressConfig  `json:"vncIngress"`
 	KeystoneRef       NamespacedName `json:"keystoneRef"`
-	PlacementRef      NamespacedName `json:"placementRef"`
-	GlanceRef         NamespacedName `json:"glanceRef"`
-	NeutronRef        NamespacedName `json:"neutronRef"`
-	IronicRef         NamespacedName `json:"ironicRef"`
 	SecretsRef        NamespacedName `json:"secretsRef"`
 	RabbitmqReference NamespacedName `json:"rabbitmqRef"`
 	DatabaseReference NamespacedName `json:"databaseRef"`
@@ -39,8 +34,8 @@ type NovaSpec struct {
 	Overrides         HelmOverrides  `json:"overrides,omitempty"`
 }
 
-// NovaStatus defines the observed state of Nova
-type NovaStatus struct {
+// GlanceStatus defines the observed state of Glance
+type GlanceStatus struct {
 	// INSERT ADDITIONAL STATUS FIELD - define observed state of cluster
 	// Important: Run "make" to regenerate code after modifying this file
 }
@@ -48,24 +43,24 @@ type NovaStatus struct {
 //+kubebuilder:object:root=true
 //+kubebuilder:subresource:status
 
-// Nova is the Schema for the nova API
-type Nova struct {
+// Glance is the Schema for the glances API
+type Glance struct {
 	metav1.TypeMeta   `json:",inline"`
 	metav1.ObjectMeta `json:"metadata,omitempty"`
 
-	Spec   NovaSpec   `json:"spec,omitempty"`
-	Status NovaStatus `json:"status,omitempty"`
+	Spec   GlanceSpec   `json:"spec,omitempty"`
+	Status GlanceStatus `json:"status,omitempty"`
 }
 
 //+kubebuilder:object:root=true
 
-// NovaList contains a list of Nova
-type NovaList struct {
+// GlanceList contains a list of Glance
+type GlanceList struct {
 	metav1.TypeMeta `json:",inline"`
 	metav1.ListMeta `json:"metadata,omitempty"`
-	Items           []Nova `json:"items"`
+	Items           []Glance `json:"items"`
 }
 
 func init() {
-	SchemeBuilder.Register(&Nova{}, &NovaList{})
+	SchemeBuilder.Register(&Glance{}, &GlanceList{})
 }

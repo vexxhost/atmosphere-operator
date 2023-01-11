@@ -1,0 +1,41 @@
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: glance
+type: Opaque
+stringData:
+  memcache: memcached
+  database: db123
+  rabbitmq: rabbit123
+  keystone: glance123
+---
+apiVersion: infra.atmosphere.vexxhost.com/v1alpha1
+kind: RabbitmqCluster
+metadata:
+  name: glance
+spec: {}
+---
+apiVersion: openstack.atmosphere.vexxhost.com/v1alpha1
+kind: Glance
+metadata:
+  name: glance
+spec:
+  replicas: 1
+  regionName: RegionOne
+  ingress:
+    host: baremetal.cloud.vexxhost.com
+    className: nginx
+  keystoneRef:
+    name: keystone
+  secretsRef:
+    name: glance
+  databaseRef:
+    name: percona-xtradb
+  rabbitmqRef:
+    name: glance
+  overrides:
+    conf:
+      glance:
+        DEFAULT:
+          foo: bar

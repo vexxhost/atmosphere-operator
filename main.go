@@ -131,7 +131,13 @@ func main() {
 		os.Exit(1)
 	}
 	// TODO: ceph_provisioners
-	// TODO: glance
+	if err = (&openstackcontrollers.GlanceReconciler{
+		Client: mgr.GetClient(),
+		Scheme: mgr.GetScheme(),
+	}).SetupWithManager(mgr); err != nil {
+		setupLog.Error(err, "unable to create controller", "controller", "Glance")
+		os.Exit(1)
+	}
 	// TODO: cinder
 	if err = (&openstackcontrollers.PlacementReconciler{
 		Client: mgr.GetClient(),
